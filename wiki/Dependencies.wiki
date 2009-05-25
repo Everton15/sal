@@ -1,0 +1,33 @@
+#summary list of SAL software dependencies
+
+This page explains how to download and install SAL and its dependencies
+
+= Pre-requisites =
+
+In order for SAL to support a sensing technology, required software must be installed prior to compiling SAL. This section lists all currently supported technologies and explains how to obtain and install their dependencies.
+*SAL expects to find all JAR files in `/usr/share/java`.*
+
+== Serial devices ==
+Communication with serial devices requires the GNU implementation of the Java Comm API, which can be obtained from [http://rxtx.qbang.org/wiki/index.php/Main_Page this page]. Under Debian/Ubuntu, you can simply `sudo apt-get install librxtx-java`. 
+
+== SNMP devices ==
+In order to communicate with SNMP devices, SAL requires the Westhawk freeware implementation of the SNMP protocol which can be obtained [http://snmp.westhawk.co.uk here]. *However, there is no need to download the package as it is already shipped with SAL.*
+
+== Video devices ==
+In order for SAL to support video streaming, you must install [http://v4l4j.googlecode.com v4l4j].
+  * *Download v4l4j* either from source or binary package (see [http://code.google.com/p/v4l4j/wiki/GettingStarted Getting started] page)
+  * Make sure it is properly installed and configured by running:
+{{{
+java -Djava.library.path=/usr/lib/jni -jar /usr/share/java/v4l4j.jar
+}}}
+  You should be able to view a video stream from a connected video device. Note that SAL expects to find the JAR file in `/usr/share/java` and the JNI library in `/usr/lib/jni`.
+
+== Hardware Asbtraction Layer ==
+In order to detect hardware-related events, SAL uses the HAL java package to connected to the HAL daemon. See [HALpackage this page] for information on how to download and install the HAL java package.
+
+== SunSPOT ==
+SunSPOT support requires the installation of the SunSPOT SDK available from [http://www.sunspotworld.com this page]. The SDK can only be downloaded via a Java WebStart application.
+
+== 1-wire device ==
+SAL deals with 1-wire devices using the OWFS software available from [http://owfs.org/ this page]. Download and install OWFS.
+
