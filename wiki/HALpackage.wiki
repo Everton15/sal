@@ -1,0 +1,127 @@
+#summary HAL java package installation
+
+The HAL java package is a GPL package containing minimal java classes to intercept the DeviceAdded and DeviceRemoved emitted by the HAL daemon whenever a change in hardware is detected. Users can create filters to be notified only when a signal matching specific criteria is received.
+
+= QUICK START GUIDE =
+For the impatient, assuming you have the ant package & a Sun JRE 6 installed
+at `/usr/lib/jvm/java-6-sun/` (if not, adjust the first line), the install/build/test instructions for ubuntu are:
+
+{{{
+JAVA_HOME=/usr/lib/jvm/java-6-sun
+wget "http://www.matthew.ath.cx/projects/java/libmatthew-java-0.7.1.tar.gz"
+tar -zxf libmatthew-java-0.7.1.tar.gz && cd libmatthew-java-0.7.1
+cp Makefile Makefile-orig && sed 's/JCFLAGS+=-source 5.0/#&/' Makefile-orig > Makefile
+PREFIX=/usr CFLAGS="-std=c99 -I${JAVA_HOME}/include/ -I${JAVA_HOME}/include/linux -fno-stack-protector" JCFLAGS="-source 6" make
+sudo sh -c 'PREFIX=/usr make install'
+cd ..
+wget "http://dbus.freedesktop.org/releases/dbus-java/dbus-java-2.5.1.tar.gz"
+tar -zxf dbus-java-2.5.1.tar.gz
+cd dbus-java-2.5.1
+sudo apt-get install texlive-latex-base docbook-to-man gettext texlive-latex-extra texlive-latex-recommended tex4ht
+PREFIX=/usr make
+sudo sh -c 'PREFIX=/usr make install'
+cd ..
+ant test
+}}}
+
+This will install & compile the dependencies, and run a test app that waits until you plug or unplug a device, and print details about it. If something goes wrong, then read on. Otherwise, install HAL.jar with "sudo ant install", generate the JavaDoc with "ant javadoc" and start coding !
+
+
+= INSTALLATION =
+ 
+== Dependencies installation ==
+
+The HAL java package depends on
+ * Sun JRE 6 (it will not work with earlier versions)
+ * the dbus-java bindings package, which itself depends on 
+ * the unix socket library (part of the libmatthew package),
+ * the debug library (part of the libmatthew package) and
+ * the hexdump library (part of the libmatthew package)
+The dbus-java binding package is available at [http://www.freedesktop.org/wiki/Software/DBusBindings]. And the libraries (the libmatthew package) are available at [http://www.matthew.ath.cx/projects/java/] (download version 0.6 or later). These dependencies are a mixture of JAR files and JNI shared libraries (architecture dependent). The following instructions will install the JAR packages in `/usr/share/java` and the JNI libraries in `/usr/lib/jni` .
+
+=== Side note for Ubuntu ===
+In Ubuntu, only Jaunty has all dependencies available as binary packages: libmatthew-debug-java, libunixsocket-java and libdbus-java. Earlier versions (up to Hardy) have libmatthew-debug-java and libunixsocket-java, but when tested, an undefined symbol (__stack_chk_fail_local) in the libunix JNI library prevented the whole package from working. In this case, the library must be compiled with an extra argument (-fno-stack-protector).This may not be required on other platforms.
+
+*Bottom line is*:
+Build & install libmatthew and dbus-java from source if you are not running Jaunty. If you are running Jaunty, try the packages and let me know if HAL works with them.
+
+
+=== Installing libmatthew  ===
+
+Installing from source code:
+{{{
+JAVA_HOME="/usr/lib/jvm/java-6-sun"
+NO_STACK_PROTECTOR="-fno-stack-protector"
+wget "http://www.matthew.ath.cx/projects/java/libmatthew-java-0.7.1.tar.gz"
+tar -zxf libmatthew-java-0.7.1.tar.gz && cd libmatthew-java-0.7.1
+cp Makefile Makefile-orig && sed 's/JCFLAGS+=-source 5.0/#&/' < Makefile-orig > Makefile
+PREFIX=/usr CFLAGS="-std=c99 -I${JAVA_HOME}/include/ -I${JAVA_HOME}/include/linux ${NO_STACK_PROTECTOR}" JCFLAGS="-source 6" make
+sudo sh -c 'PREFIX=/usr make install'
+}}}
+
+If needed, uninstall with:
+{{{
+sudo rm -f /usr/lib/jni/libcgi-java.so /usr/lib/jni/libunix-java.so \
+  /usr/share/java/debug-enable-1.1.jar /usr/share/java/debug-disable-1.1.jar \
+   /usr/share/java/unix-0.3.jar /usr/share/java/cgi-0.5.jar \
+   /usr/share/java/io-0.1.jar /usr/share/java/hexdump-0.2.jar \
+   /usr/share/java/debug-disable.jar /usr/share/java/debug-enable.jar \
+   /usr/share/java/unix.jar /usr/share/java/io.jar /usr/share/java/cgi.jar \
+   /usr/share/java/hexdump.jar
+}}}
+
+
+The above assume you have a Sun JRE 6 installed in `/usr/lib/jvm/java-6-sun`, and that you are running Ubuntu. If your JRE installed somewhere else, modify the JRE_HOME variable to point to the right place. The NO_STACK_PROTECTOR is required in Ubuntu but may not be necessary in other distributions.The above will install a few JAR files in `/usr/share/java` and a JNI library in `/usr/lib/jni`.
+
+
+=== Installing DBus-java === 
+
+Install dbus-java either from source (recommended) or from a package (for Ubuntu Jaunty) :
+ * From source:
+{{{
+wget "http://dbus.freedesktop.org/releases/dbus-java/dbus-java-2.5.1.tar.gz"
+tar -zxf dbus-java-2.5.1.tar.gz
+cd dbus-java-2.5.1
+sudo apt-get install texlive-latex-base docbook-to-man gettext texlive-latex-extra texlive-latex-recommended
+PREFIX=/usr make
+sudo sh -c 'PREFIX=/usr make install'
+}}}
+
+Uninstall with
+{{{
+sudo sh -c 'PREFIX=/usr make uninstall'
+}}}
+
+ * From package:
+  Do not install the following package if you have installed libmatthew from source.
+{{{
+wget "http://mirrors.kernel.org/ubuntu/pool/universe/d/dbus-java/libdbus-java_2.5.1-0ubuntu1_all.deb"
+sudo dpkg -i libdbus-java_2.5.1-0ubuntu1_all.deb 
+}}}
+
+Regardless of whether installing from source or package, the above will install
+a few JAR files in `/usr/share/java`.
+
+
+= BUILDING HAL =
+
+If you have followed the previous section on installing the dependencies, they should all be located in `/usr/share/java` (the ant build file expect to find them there). If they are installed somewhere else, you must edit the "project.deps.dir" property in build.xml to point to the appropriate directory.
+
+Then run `ant clean jar` to compile and pack everything in a JAR file. Note that the JAR file contains a hardcoded classpath pointing to the JAR dependencies using the "project.deps.dir" property. 
+
+
+= TESTING HAL =
+This package comes with a small test application which connects to HAL via DBUS and waits for DeviceAdded/DeviceRemoved signals, and prints their details on the screen. You can run the test app with `ant test`
+
+  
+= USING HAL =
+To use this package, you need to
+ * first, install this package's JAR file (HAL.jar) in a standard location. This is done by running `sudo ant install`. By default, the standard location is `/usr/share/java`.
+ * then make sure HAL.jar is in your application's classpath. No need to add HAL's dependencies to the classpath as HAL.jar already holds hardcoded paths to the JAR files it depends on.
+ * specify the location where libmatthew JNI library can be found by passing `-Djava.library.path=...` to the JVM. If you followed the installation instructions above, the library is installed in `/usr/lib/jni`.
+ 
+Assuming you have installed HAL.jar, the last two steps can be done with:
+{{{
+java -cp /usr/share/java/HAL.jar:Your_App_classpath -Djava.library.path=/usr/lib/jni package.yourApplication 
+}}}
+
