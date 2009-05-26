@@ -18,12 +18,10 @@ The diagram below represents a typical software stack for sensor networks using 
 
 = High level design =
 
-SAL features are implemented in SAL agents. A SAL agent instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly over a wireless network for instance. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
+SAL features are implemented in SAL agents. A SAL agent instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly over a wireless network for instance. This platform is referred to as a sensor gateway. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
 
 A SAL agent offers a simple interface (a Java interface) with the following methods:
   * sensor enumeration
   * sensor capabilities discovery
   * sensor management (addition/removal)
   * platform configuration
-
-
