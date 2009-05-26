@@ -107,11 +107,13 @@ a few JAR files in `/usr/share/java`.
 
 If you have followed the previous section on installing the dependencies, they should all be located in `/usr/share/java` (the ant build file expect to find them there). If they are installed somewhere else, you must edit the "project.deps.dir" property in build.xml to point to the appropriate directory.
 
-Then run `ant clean jar` to compile and pack everything in a JAR file. Note that the JAR file contains a hardcoded classpath pointing to the JAR dependencies using the "project.deps.dir" property. 
+Then run `ant clean jar` to compile and pack everything in a JAR file. Note that the JAR file contains a hardcoded classpath pointing to the JAR dependencies using the "project.deps.dir" property.
+
+Install with `sudo ant install`. You can uninstall later on with `sudo ant uninstall`. By default, the JAR file is installed in `/usr/share/java/HAl.jar`
 
 
 = TESTING HAL =
-This package comes with a small test application which connects to HAL via DBUS and waits for DeviceAdded/DeviceRemoved signals, and prints their details on the screen. You can run the test app with `ant test`
+This package comes with a small test application which connects to HAL via DBUS and waits for DeviceAdded/DeviceRemoved signals, and prints their details on the screen. You can run the test app with `ant test-signal`
 
   
 = USING HAL =
@@ -124,4 +126,3 @@ Assuming you have installed HAL.jar, the last two steps can be done with:
 {{{
 java -cp /usr/share/java/HAL.jar:Your_App_classpath -Djava.library.path=/usr/lib/jni package.yourApplication 
 }}}
-
