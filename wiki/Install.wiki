@@ -12,6 +12,8 @@ svn co http://sal.googlecode.com/svn/SAL/trunk SAL
 This will create a SAL directory containing the SAL source tree.
 
 = Building =
+*Before build SAL, make sure you have installed all its dependencies as explained on the [Dependencies dependencies page].*
+
 Install the SNMP package in the standard JAR location using:
 {{{
 sudo ant dep
