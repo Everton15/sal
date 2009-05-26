@@ -1,5 +1,6 @@
 #summary overview of the SAL implementation and components
 #labels Featured
+#sidebar SALSideBar
 
 This page gives a high level overview of the Sensor Abstraction Layer.
 
