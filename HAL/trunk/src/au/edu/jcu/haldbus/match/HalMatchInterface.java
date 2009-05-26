@@ -6,7 +6,7 @@ import au.edu.jcu.haldbus.exceptions.MatchNotFoundException;
 /**
  * Classes implementing this interface encapsulate information on criteria applied to an HAL object and decide whether
  * this HAL object is a match or not. Properties in HAL objects are
- * checked and required ones are passed to an <code>HalMatchInterface</code>, which decide whether there is a match or not.
+ * checked and required ones are passed to an <code>HalMatchInterface</code>, which decides whether there is a match or not.
  * The use case is somewhat recursive and is detailed below:
  * <ul>
  * <li>{@link #matchThisObject()} returns <code>true</code>: this {@link HalMatchInterface} should be matched against 

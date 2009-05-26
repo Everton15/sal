@@ -30,7 +30,7 @@ public class NextMatch extends AbstractMatch {
 	}
 
 	@Override
-	public String matchObject(Object o) throws MatchNotFoundException {
+	protected String matchObject(Object o) throws MatchNotFoundException {
 		 throw new MatchNotFoundException();
 	}
 

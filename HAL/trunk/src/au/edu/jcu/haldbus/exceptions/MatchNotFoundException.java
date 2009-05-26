@@ -1,6 +1,11 @@
 package au.edu.jcu.haldbus.exceptions;
 
-public class MatchNotFoundException extends DBusException {
+/**
+ * This type of exception is internal to the HAL java package.
+ * @author gilles
+ *
+ */
+public class MatchNotFoundException extends HalDBusException {
 
 	private static final long serialVersionUID = 1L;
 

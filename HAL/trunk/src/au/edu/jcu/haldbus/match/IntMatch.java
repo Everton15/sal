@@ -76,7 +76,7 @@ public class IntMatch extends AbstractMatch {
 	}
 
 	@Override
-	public String matchObject(Object o) throws MatchNotFoundException {
+	protected String matchObject(Object o) throws MatchNotFoundException {
 		int v = ((Integer) o).intValue();
 		if(valMin<=v && v<=valMax)
 			return String.valueOf(v);

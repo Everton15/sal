@@ -5,7 +5,7 @@ import au.edu.jcu.haldbus.exceptions.InvalidMethodCall;
 import au.edu.jcu.haldbus.exceptions.MatchNotFoundException;
 
 /**
- * This class impements the barebones structure of a Hal Match object. It mostly handles construction of the object
+ * This class implements the barebones structure of a Hal Match object. It mostly handles construction of the object
  * and makes sure the right attributes are initialised. It then declares some get() methods. Subclasses need only
  * implement a proper constructor and a matchObject() method.<br>HAL match object have some form of recursivity: they can
  * hold a reference to another HAL match object (referred to as the <b>"next HAL match object"</b>). Two scenarios can happen:<ul>

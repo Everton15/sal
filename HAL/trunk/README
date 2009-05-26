@@ -22,7 +22,7 @@ sudo apt-get install texlive-latex-base docbook-to-man gettext texlive-latex-ext
 PREFIX=/usr make
 sudo sh -c 'PREFIX=/usr make install'
 cd ..
-ant test
+ant test-signal
 
 This will install & compile the dependencies, and run a test app that waits 
 until you plug or unplug a device, and print details about it. If something

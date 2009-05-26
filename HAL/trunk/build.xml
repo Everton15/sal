@@ -82,7 +82,9 @@
 	</target>	
 	
 	<target name="javadoc">
-		<javadoc sourcepath="${project.src}" packagenames="au.edu.jcu.haldbus.*" destdir="${project.javadoc.dir}" public="true" use="true" />
+		<javadoc sourcepath="${project.src}" classpathref="build.classpath" packagenames="au.edu.jcu.haldbus.*" destdir="${project.javadoc.dir}" public="true" use="true">
+			<excludepackage name="org.freedesktop.Hal" />
+		</javadoc>
 	</target>
 	
 	<target name="test-signal" depends="jar">

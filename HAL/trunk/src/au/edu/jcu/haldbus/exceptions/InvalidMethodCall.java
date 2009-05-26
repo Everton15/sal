@@ -1,5 +1,10 @@
 package au.edu.jcu.haldbus.exceptions;
 
+/**
+ * This type of exception is internal to the HAL java package.
+ * @author gilles
+ *
+ */
 public class InvalidMethodCall extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

@@ -47,7 +47,7 @@ public class GenericMatch<T> extends AbstractMatch {
 	 * This constructor builds a HAL match object against a property of type String. The comparison can be made
 	 * case insensitive and against a substring of the property by setting <code>substring</code> and <code>nocase</code. to true.
 	 * @param prop the property name 
-	 * @param val the expected value (Must be of type String, otherwise an {@link InvalidConstructorArgsTemp} exception
+	 * @param val the expected value (Must be of type String, otherwise an {@link InvalidArgumentsException} exception
 	 * will be thrown).
 	 * @param substring if set, match if <code>val</code> is a substring tof the property value
 	 * @param nocase if set, comparison is case insensitive
@@ -64,6 +64,16 @@ public class GenericMatch<T> extends AbstractMatch {
 		noCase = nocase;
 	}
 	
+	/**
+	 * This constructor builds a HAL match object against a property of type String. The comparison can be made
+	 * case insensitive and against a substring of the property by setting <code>substring</code> and <code>nocase</code. to true.
+	 * @param prop the property name 
+	 * @param val the expected value (Must be of type String, otherwise an {@link InvalidArgumentsException} exception
+	 * will be thrown).
+	 * @param substring if set, match if <code>val</code> is a substring tof the property value
+	 * @param nocase if set, comparison is case insensitive
+	 * @throws InvalidArgumentsException if one of the arguments is invalid (for example, val is not a string) 
+	 */
 	public GenericMatch(String prop, T val, boolean substring, boolean nocase){
 		super(prop, "GenericMatch<"+val.getClass().getName()+">");
 		if(!(val instanceof String))

@@ -8,7 +8,7 @@ import au.edu.jcu.haldbus.match.HalMatchInterface;
 /**
  * This interface defines required methods in all Hal clients interested in filtering HAL objects. Clients typically
  * provide a list of match objects implementing the <code>HalMatchInterface</code>. Each object is used to filter the
- * list of properties associated with a newly added HAL object. When all the match objects have been tested,
+ * list of properties associated with a newly added/removed HAL object. When all the match objects have been tested,
  * {@link #deviceAdded(Map)} is called if the number of matches is between {@link #getMinMatches()} and
  * {@link #getMaxMatches()}.<br>
  * The use case goes as follows:

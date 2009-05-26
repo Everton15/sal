@@ -42,7 +42,7 @@ public class VectorMatch<T> extends AbstractMatch {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public String matchObject(Object o) throws MatchNotFoundException {
+	protected String matchObject(Object o) throws MatchNotFoundException {
 		Vector<T> l = (Vector<T>) o;
 		if(l.contains(propValue))
 			return propValue.toString();

@@ -28,20 +28,20 @@ public abstract class AbstractHalFilter implements HalFilterInterface {
 	 * the initial run, ie only once at startup. There will no be any notifications
 	 * upon subsequent connections/disconnections.
 	 */
-	public static int INITIAL_RUN_FLAG = 1;
+	public final static int INITIAL_RUN_FLAG = 1;
 	
 	/**
 	 * Using this flag, match objects in this HAL client will be matched only during
 	 * the subsequent run, ie there will be no notifications at startup for existing
 	 * matching objects.
 	 */
-	public static int SUBSEQUENT_RUN_FLAG = 2;
+	public final static int SUBSEQUENT_RUN_FLAG = 2;
 	
 	/**
 	 * Using this flag, match objects in this HAL client will be matched both during
 	 * the initial & subsequent runs.
 	 */
-	public static int ALWAYS_RUN_FLAG = (INITIAL_RUN_FLAG | SUBSEQUENT_RUN_FLAG);
+	public final static int ALWAYS_RUN_FLAG = (INITIAL_RUN_FLAG | SUBSEQUENT_RUN_FLAG);
 	
 
 	/**

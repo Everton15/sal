@@ -1,5 +1,11 @@
 package au.edu.jcu.haldbus.exceptions;
 
+/**
+ * This type of exception is thrown when there is an error communicating with
+ * the HAL daemon over DBus.
+ * @author gilles
+ *
+ */
 public class DBusException extends HalDBusException {
 	private static final long serialVersionUID = 1L;
 	
