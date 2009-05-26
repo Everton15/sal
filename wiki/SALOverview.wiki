@@ -1,0 +1,29 @@
+#summary overview of the SAL implementation and components
+#labels Featured
+
+This page gives a high level overview of the Sensor Abstraction Layer.
+
+= Introduction & rationale =
+Traditional sensor network infrastructures rely heavily on middleware software to interface with various instruments. In the current state, plugin-based middleware software does not offer the flexibility required to achieve “plug & play”, where users can simply connect new sensors and instruments and expect them to work straight away.
+
+In an attempt to use the sensing technology best suited to a task, it has become common to find many disparate monitoring devices and instruments from different manufacturers. More and more, heterogeneous sensing technologies are being integrated within single installations.
+
+In order to streamline hardware integration and eliminate the need for manual configuration and setup, middleware technology must be decoupled from hardware. Common tasks must be grouped together in their own software layer, which in turn provides a common, device-independent abstracted view of sensor and instrument hardware. Encapsulating all hardware-interacting code within a single software layer provides a standard way of accessing and managing instruments. 
+
+The Sensor Abstraction Layer (SAL) is a low-level software layer which encapsulates all hardware-related functionalities, removes hardware-dependent code from middleware software and facilitates interactions with sensors and instruments. SAL implements hardware detection, configuration, access and control functions and enforces a clear separation of responsibilities with respect to hardware interactions. Using SAL, middleware software can be made device- and technology-independent. Hardware management functions are only implemented in SAL, which avoids code duplication and promotes code re-usability across middleware technologies. SAL solves many of the issues current middleware products have with respect to hardware detection and configuration, as it automates most of these tasks, making new instruments available for immediate use as soon as they are connected.
+
+The diagram below represents a typical software stack for sensor networks using SAL.
+
+[http://sensor-abstraction.googlegroups.com/web/middleware-small.png]
+
+= High level design =
+
+SAL features are implemented in SAL agents. A SAL agent instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly over a wireless network for instance. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
+
+A SAL agent offers a simple interface (a Java interface) with the following methods:
+  * sensor enumeration
+  * sensor capabilities discovery
+  * sensor management (addition/removal)
+  * platform configuration
+
+
