@@ -70,11 +70,14 @@
 		<echo message=""/>
 	</target>
 	
+	<target name="dep">
+		<copy file="${project.lib}/${plugins.deps.snmp.jar}" tofile="${platform.standard.jar.location}/${plugins.deps.snmp.jar}" />
+	</target>
+	
 	<target name="init">
 		<mkdir dir="${project.agent.classes}" />
 		<mkdir dir="${project.clients.classes}" />
 		<mkdir dir="${project.plugins.classes}" />
-		<copy file="${project.lib}/${plugins.deps.snmp.jar}" tofile="${platform.standard.jar.location}/${plugins.deps.snmp.jar}" />
 	</target>
 	
 	<target name="compile-agent" depends="init, compile-common">

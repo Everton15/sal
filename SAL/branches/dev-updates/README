@@ -30,7 +30,7 @@ v4l4j can be obtained from http://v4l4j.googlecode.com/svn/v4l4j/trunk
 SAL expects to find the following JAR file:
 /usr/share/java/v4l4j.jar
 
-JNI lib in ${java.home}/jre/lib/{i386,amd64}
+JNI lib in /usr/lib/jni
 
  * HAL helper *
 requires the HAL package from http://sal.googlecode.com/svn/HAL/trunk

@@ -5,6 +5,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,7 +49,12 @@ public class RMIClientStub implements SALAgent{
 	 */
 	public RMIClientStub(String agentRmiIP, String ourIP, String RMIname) throws RemoteException, ConfigurationException{
 		agentRegistry = LocateRegistry.getRegistry(agentRmiIP);
-		ourRegistry = LocateRegistry.getRegistry(ourIP);
+		try {
+			ourRegistry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+		} catch (ExportException e){
+			//a registry is already running ? try getRegistry instead
+			ourRegistry = LocateRegistry.getRegistry(ourIP);
+		}
 		rmiName = RMIname;
 		agentIP = agentRmiIP;
 	

@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.util.List;
@@ -206,7 +207,13 @@ public class RMIAgentImpl implements RMIAgent {
 		}
 		Registry registry;
 		try {
-			registry = LocateRegistry.getRegistry(args[0]);
+			//registry = LocateRegistry.getRegistry(args[0]);
+			try {
+				registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+			} catch (ExportException e){
+				//a registry is already running ? try getRegistry instead
+				registry = LocateRegistry.getRegistry(args[0]);
+			}
 		} catch (RemoteException e1) {
 			System.out.println("Error finding our registry");
 			throw e1;
