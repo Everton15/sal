@@ -1,4 +1,5 @@
 #summary summary of the SAL agent API
+#sidebar SALSideBar
 
 This page details the SAL agent API, which is is user-visible portion of SAL.
 
