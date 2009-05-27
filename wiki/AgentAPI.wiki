@@ -5,13 +5,13 @@ This page details the SAL agent API, which is is user-visible portion of SAL.
 
 = Introduction =
 The API is fairly simple. The methods it offers are grouped in three categories:
-  * node management (enumerate, add & remove sensors)
+  * sensor management (enumerate, add & remove sensors)
   * sensor control (discover capabilities, start & stop reading streams)
   * platform configuration
 Each category is covered in detail in the following sections.
 
 
-= Node management =
+= Sensor management =
 Methods in this category are used to manage the pool of sensor nodes. The [SML Sensor markup language] is used to describe sensor configuration. An SML description document is an SML document containing configuration information for a single sensor. An SML descriptions document is an SML document containing configuration information for multiple sensor.
 
 {{{
@@ -45,129 +45,67 @@ Methods in this category report on sensor capabilities and control data streamin
 
  
 {{{
-public interface SALAgent{
-        
-        /**
-         * This method returns the unique ID of this SAL Agent
-         * @return the unique ID of this SAL Agent
-         */
-        public String getID();
-        
-        /**
-         * This method returns a string representation of the type of this agent
-         * Possible values are: {@link Constants#Local_Agent_type}, {@link Constants#RMI_Agent_type}
-         * @return the type of this agent
-         */
-        public String getType();
-        
-   
-        /**
-         * This method sets up a stream given a sensor and a command.
-         * The command will be sent to the sensor at fixed intervals in time (as specified
-         * in the {@link Command} object), creating a stream of {@link Response}s, sent
-         * back to the client. After setting up the stream, the {@link #startStream(StreamID)}
-         * method must be called with the returned value of this method (a {@link StreamID}), to start
-         * streaming, EXCEPT if the command is to be run only once, in which case, 
-         * the returned {@link StreamID} is null and {@link #startStream(StreamID)} 
-         * will be called automatically. 
-         * @param c the command to be executed. {@link Command}s are created using a 
-         * {@link CommandFactory} object.
-         * @param sid the target sensor identifier
-         * @return a {@link StreamID} which uniquely identifies this stream, or <code>null</codE>
-         * if the command will run only once, in which case, this method will also call 
-         * {@link #startStream(StreamID)}.
-         * @throws NotFoundException if the given sensor id does not match any existing sensor
-         * @throws SensorControlException if there is an error controlling the sensor. If this exception is raised,
-         * the cause of this exception will be linked to it and can be retrieved using <code>getCause()</code>  
-         */
-        public StreamID setupStream(Command c, String sid) throws NotFoundException, SensorControlException;
-        
-        /**
-         * This method starts a stream previously setup using {@link #setupStream(Command, String)}.
-         * @param streamId the id of the stream as returned by {@link #setupStream(Command, String)}.
-         * @throws NotFoundException if the given stream Id has not been setup prior
-         * to calling this method.
-         * @throws SALRunTimeException if the stream has already been started once before.
-         */
-        public void startStream(StreamID streamId) throws NotFoundException;
-        
-        /**
-         * This method stops and deletes a stream previously setup using {@link #setupStream(Command, String)}.
-         * @param streamId the id of the stream as returned by {@link #setupStream(Command, String)}.
-         * @throws NotFoundException if the given stream Id has not been setup prior
-         * to calling this method.
-         */
-        public void terminateStream(StreamID streamId) throws NotFoundException;
-        
-        /**
-         * This method returns the a string representation of the CML descriptions document for a given sensor.
-         * The returned string can be used to create a {@link CMLDescriptions} object to facilitate parsing the
-         * XML document.
-         * @param sid the sensor identifier
-         * @return the CML document, from which a {@link CMLDescriptions} can be created to facilitate parsing.
-         * @throws NotFoundException if the given sensor ID does not match any existing sensor
-         */
-        public String getCML(String sid) throws NotFoundException;
-        
-        /*
-         * Protocols-related methods 
-         */
-        
-        /**
-         * This method instantiates a new protocol given its PCML protocol configuration document (as generated
-         * by {@link ProtocolConfiguration#getXMLString()} . If successful, this method will also store the
-         * protocol's PCML configuration information in the platform configuration file
-         * @param xml a string version of the protocol's PCML protocol description document as generated by
-         * {@link ProtocolConfiguration#getXMLString()}
-         * @param loadSensors set to true if the sensor configuration file should be checked for sensors associated with 
-         * this protocol and create them.
-         * @throws ConfigurationException if the protocol cannot be instantiated because of invalid configuration information
-         * @throws SALDocumentException if the given PCML document is malformed  
-         */
-        public void addProtocol(String xml, boolean loadSensors) throws ConfigurationException, SALDocumentException;
-        
-        /**
-         * This method removes a protocol given its ID. The protocol is first stopped so commands are no further 
-         * accepted. It then removes all associated sensors and their configuration if <code>removeSensors</code> is set to true.
-         * @param pid the protocol identifier
-         * @param removeSensor whether or not to remove the sensor configuration associated with this protocol from the config file
-         * @throws NotFoundException if the given protocol ID doesnt match any existing protocols
-         */
-        public void removeProtocol(String pid, boolean removeSensors) throws NotFoundException;
-        
-        /**
-         * This method lists the configuration of all existing protocols. The returned value is a string
-         * representation of a PCML protocol descriptions document, which can be used to create a 
-         * {@link ProtocolConfigurations} object to facilitate parsing.
-         * @return a string representation of a PCML document listing the protocols configuration, which can be used to create a 
-         * {@link ProtocolConfigurations} object to facilitate parsing.
-         */
-        public String listProtocols();
-        
-        /*
-         * Event-related methods 
-         */
-        /**
-         * This method registers an event handler. Whenever the producer <code>producerID</code> generates an event, the method
-         * {@link ClientEventHandler#handle(jcu.sal.common.events.Event)} will be called on the given EventHandler <code>eh</code>.
-         * A Producers ID is usually a protocol name. However, three special producers also exist:
-         *  {@link Constants#SENSOR_MANAGER_PRODUCER_ID} which generates
-         * <code>SensorNodeEvent</code> events when sensors are created and deleted, {@link Constants#SENSOR_MANAGER_PRODUCER_ID} which
-         * generates <code>ProtocolListEvent</code> events when protocols are created and deleted, {@link Constants#SENSOR_MANAGER_PRODUCER_ID}
-         * which generates <code>SensorStateEvent</code> events when a sensor is connected or disconnected.  
-         * @param eh an instance of a class implementing the EventHandler interface which will receive events.
-         * @param producerID the identifier of a protocol or the special identifiers "SensorManager", "ProtocolManager" or "SensorState"
-         * @throws NotFoundException if the given producerID doesnt exist
-         */
-        public void registerEventHandler(ClientEventHandler eh, String producerID) throws NotFoundException;
-        
-        /**
-         * This method unregisters an EventHandler previously registered with <code>registerEventHandler()</code>
-         * @param eh the EventHandler to re be removed
-         * @param producerID the producer to which it is associated
-         * @throws NotFoundException if the handler can not be found/removed
-         */
-        public void unregisterEventHandler(ClientEventHandler eh, String producerID) throws NotFoundException;
-        
-}
+public StreamID setupStream(Command c, String sid) throws NotFoundException, SensorControlException;
 }}}
+This method sets up a new data stream produced by sending the given command repeatedly to a sensor identified by its sensor ID. The command contains the sampling frequency (how often it should be executed), which can be either:
+  * continuous, the sensor sends data continuously, until `terminateStream()` is called,
+  * once, the sensor sends data only once and closes the stream.
+  * predefined, the sensor sends data at specific intervals.
+See ADD LINK HERE section on how to create Command objects.
+
+The returned value is a stream identifier object which uniquely identifies this stream. However, the returned value is null if the command's sampling frequency is set to 'once'.
+Note that if the sampling frequency is set to 'continuous' or 'predefined', the stream will only start when a call to `startStream()` is made. This is not required when the sampling frequency is set to 'once'.
+
+{{{
+public void startStream(StreamID streamId) throws NotFoundException;
+}}}
+This method starts a stream. It must be called only if the stream's sampling frequency is set to 'continuous' or 'once'.
+
+{{{
+public void terminateStream(StreamID streamId) throws NotFoundException;
+}}}
+This method closes a stream.
+
+{{{
+public String getCML(String sid) throws NotFoundException;
+}}}
+This method returns a string representation of a CML document, which describes commands supported by a given sensor.
+
+= Platform configuration =
+Methods in this category adjust the running configuration of the agent. They can be used to add or remove support for a new technology.
+{{{
+public void addProtocol(String xml, boolean loadSensors) throws ConfigurationException, SALDocumentException;
+}}}
+This method instantiates a new protocol given a string representation of its PCML description. The boolean specifies whether to instantiates sensors belonging to this protocol if found in the configuration file.
+
+{{{
+public void removeProtocol(String pid, boolean removeSensors) throws NotFoundException;
+}}}
+This method removes an existing protocol given it protocol identifier.
+
+{{{
+public String listProtocols();
+}}}
+This method returns a string representation of the PCML descriptions object which lists all currently existing protocols.
+
+= Miscellaneous =
+{{{
+public String getID();
+}}}
+This method returns a unique identifier for this SAL agent.
+
+{{{
+public String getType();
+}}}
+This method returns the type of this agent (local or remote)
+
+{{{
+public void registerEventHandler(ClientEventHandler eh, String producerID) throws NotFoundException;
+}}}
+This method registers a event handler which will receive events originating from the producer identified by its producer ID.
+
+{{{
+public void unregisterEventHandler(ClientEventHandler eh, String producerID) throws NotFoundException;
+}}}
+This method unregisters a event handler.
+ 
