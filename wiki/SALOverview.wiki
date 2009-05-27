@@ -19,10 +19,42 @@ The diagram below represents a typical software stack for sensor networks using 
 
 = High level design =
 
-SAL features are implemented in SAL agents. A SAL agent instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly over a wireless network for instance. This platform is referred to as a sensor gateway. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
+== SAL components ==
 
-A SAL agent offers a simple interface (a Java interface) with the following methods:
-  * sensor enumeration
-  * sensor capabilities discovery
-  * sensor management (addition/removal)
-  * platform configuration
+SAL features are implemented in SAL agents. A *SAL agent* instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly (over a wireless network for instance). This platform is referred to as a *sensor gateway*. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
+
+*SAL clients* uses the public (Java) interface provided by SAL agents to have them execute specific actions on sensors. This Java interface is referred to as the *SAL agent API* or *SAL API* in short.
+
+== SAL API ==
+When using SAL, all interactions with sensing hardware are delegated to a SAL agent. SAL agents provide a simple (Java) interface whose methods must be called in order to perform specific actions on the underlying hardware. Methods in the interface are grouped in the following categories:
+  * *sensor management* (enumeration/addition/removal)
+  * *sensor capabilities discovery & control*
+  * *platform configuration* (addition/removal of new sensing technologies)
+A detailed analysis of each category can be found on the [AgentAPI SAL agent API page].
+
+== Local & Remote agents ==
+A *local SAL agent* instance on a sensor gateway runs in its own Java Virtual Machine (JVM). The SAL agent interface (SAL API) is only available in that JVM. In order to use it, a client application must be run in the same JVM as the agent. This approach has the added advantage of low-overhead method calls and low latency.
+
+A *remote SAL agent* is a instance of a SAL agent whose interface has been exported using Java Remote Method Invocation (RMI). All methods in the SAL API of a remote agent can be called from a separate JVM over a network connection. Remote agents can handle multiple simultaneous client connections.
+
+= Markup languages =
+SAL provides a unique API which is used to control all kinds of sensors. In order to achieve this, the API relies on various markup languages to report on sensor configuration and capabilities.
+
+Methods in the sensor management category make use of *SML description(s) documents*. SML is a rather simple markup language that describes a sensor's configuration (from a programming point-of view).
+
+Methods in the sensor capabilities and control category rely on *CML documents*, which contain a list of capabilities (commands) supported by a sensor.
+
+Methods in the platform configuration category use *PCML documents* which describe how the platform should be configured in order to support a specific sensing technology.
+
+= Use case = 
+A typical use case is as follows:
+  # Using a SAL agent factory, a SAL client creates an instance of local SAL agent or obtains a reference to a remote agent. Either way, both references returned by the factory implement the same interface: the SAL agent interface.
+  # The client may want to subscribe to specific events (such addition/removal of 
+  # The clients obtains a list and description of sensors managed by the agent.sensors) to save a couple of method invocations just to stay up-to-date.
+  # Loop over steps 5,6 & 7
+  #     The client identifies which sensor to control and asks the agent for a list of capabilities supported by that sensor. This list is merely a collection of commands (and their descriptions) that can be sent to the sensor to trigger a pre-determined behaviour.
+  #     The client picks a command and instructs the agent to execute it.
+  #     The result of the command is sent back to the client.
+  # Just before exiting, the client releases the SAL agent, and then terminates.
+
+[AgentAPI Next: SAL Agent API]
