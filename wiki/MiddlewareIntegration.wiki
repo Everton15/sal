@@ -1,4 +1,6 @@
-#summary how SAL integrates with middelware software
+#summary how SAL integrates with middleware software
+#sidebar SALSideBar
+
 
 This page explains how SAL integrates with a well-known middleware suite for sensor networks: Data Turbine.
 
