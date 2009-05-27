@@ -57,4 +57,7 @@ A typical use case is as follows:
   #     The result of the command is sent back to the client.
   # Just before exiting, the client releases the SAL agent, and then terminates.
 
+= Multi-technology support =
+*A protocol* is an object used internally that represent a single technology. Literally, a protocol object translates calls to methods in the SAL API into a series of device-specific calls.
+
 [AgentAPI Next: SAL Agent API]
