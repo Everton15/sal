@@ -42,7 +42,7 @@ SAL provides a unique API which is used to control all kinds of sensors. In orde
 
 Methods in the sensor management category make use of *SML description(s) documents*. SML is a rather simple markup language that describes a sensor's configuration (from a programming point-of view).
 
-Methods in the sensor capabilities and control category rely on *CML documents*, which contain a list of capabilities (commands) supported by a sensor.
+Methods in the sensor capabilities and control category rely on *CML documents*, which contain a list of capabilities (commands) supported by a sensor. See [CML this page] for more information.
 
 Methods in the platform configuration category use *PCML documents* which describe how the platform should be configured in order to support a specific sensing technology.
 
