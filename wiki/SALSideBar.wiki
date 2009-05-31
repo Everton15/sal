@@ -1,6 +1,6 @@
  * [SALOverview SAL Overview]
    * [SALOverview#Introduction_&_rationale Introduction & rationale]
-   * [SALOverview#High_level_ design High level design]
+   * [SALOverview#High_level_design High level design]
      * [SALOverview#SAL_components SAL components]
      * [SALOverview#SAL_API SAL API]
      * [SALOverview#Local_&_Remote_agents Local & remote agents]
