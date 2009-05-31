@@ -4,10 +4,11 @@ The HAL java package is a GPL package containing minimal java classes to interce
 
 = QUICK START GUIDE =
 For the impatient, assuming you have the ant package & a Sun JRE 6 installed
-at `/usr/lib/jvm/java-6-sun/` (if not, adjust the first line), the install/build/test instructions for ubuntu are:
+at `/usr/lib/jvm/java-6-sun/` (if not, adjust the first line), the download/install/build/test instructions for ubuntu are:
 
 {{{
 JAVA_HOME=/usr/lib/jvm/java-6-sun
+svn co http://sal.googlecode.com/svn/HAL/trunk HAL
 wget "http://www.matthew.ath.cx/projects/java/libmatthew-java-0.7.1.tar.gz"
 tar -zxf libmatthew-java-0.7.1.tar.gz && cd libmatthew-java-0.7.1
 cp Makefile Makefile-orig && sed 's/JCFLAGS+=-source 5.0/#&/' Makefile-orig > Makefile
@@ -28,6 +29,12 @@ This will install & compile the dependencies, and run a test app that waits unti
 
 
 = INSTALLATION =
+
+== HAL Download ==
+The HAL source tree is available in a subversion repository and can be downloaded using:
+{{{
+svn co http://sal.googlecode.com/svn/HAL/trunk HAL
+}}}
  
 == Dependencies installation ==
 
@@ -42,8 +49,8 @@ The dbus-java binding package is available at [http://www.freedesktop.org/wiki/S
 === Side note for Ubuntu ===
 In Ubuntu, only Jaunty has all dependencies available as binary packages: libmatthew-debug-java, libunixsocket-java and libdbus-java. Earlier versions (up to Hardy) have libmatthew-debug-java and libunixsocket-java, but when tested, an undefined symbol (__stack_chk_fail_local) in the libunix JNI library prevented the whole package from working. In this case, the library must be compiled with an extra argument (-fno-stack-protector).This may not be required on other platforms.
 
-*Bottom line is*:
-Build & install libmatthew and dbus-java from source if you are not running Jaunty. If you are running Jaunty, try the packages and let me know if HAL works with them.
+*Bottom line is:
+Build & install libmatthew and dbus-java from source if you are not running Jaunty. If you are running Jaunty, try the packages and let me know if HAL works with them. *
 
 
 === Installing libmatthew  ===
@@ -109,7 +116,7 @@ If you have followed the previous section on installing the dependencies, they s
 
 Then run `ant clean jar` to compile and pack everything in a JAR file. Note that the JAR file contains a hardcoded classpath pointing to the JAR dependencies using the "project.deps.dir" property.
 
-Install with `sudo ant install`. You can uninstall later on with `sudo ant uninstall`. By default, the JAR file is installed in `/usr/share/java/HAl.jar`
+Install with `sudo ant install`. You can uninstall later on with `sudo ant uninstall`. By default, the JAR file is installed in `/usr/share/java/HAL.jar`
 
 
 = TESTING HAL =
