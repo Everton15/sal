@@ -253,7 +253,7 @@ public abstract class AbstractStore {
 
 	}
 	
-	protected void dumpCML(String k){
+	public void dumpCML(String k){
 		Hashtable<Integer, CMLDescription> t = cmls.get(k);
 		Integer i;
 		if(t!=null){
@@ -263,6 +263,9 @@ public abstract class AbstractStore {
 				i=e.nextElement();
 				logger.debug("CML Doc CID: "+i.intValue());
 				logger.debug("\tMethod name: "+t.get(i).getMethodName());
+				logger.debug("#############################CML DOC:");
+				logger.debug(t.get(i).getXMLString());
+				logger.debug("#############################\n");
 			}
 		} else {
 			logger.debug("No such key in cmlstore");

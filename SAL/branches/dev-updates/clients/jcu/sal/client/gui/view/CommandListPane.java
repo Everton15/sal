@@ -104,7 +104,6 @@ public class CommandListPane implements ListSelectionListener{
 				//yes it does, so get them.
 				cmls = c.getCMLDescriptions();
 			
-			
 			for(CMLDescription cml : cmls.getDescriptions())
 				l.add(new CommandListLabel(cml));
 			

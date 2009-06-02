@@ -167,7 +167,7 @@ public class CommandDataPane implements ActionListener{
 			else //if(arg.getType().equals(ArgumentType.StringArgument))
 				v = createStringArgHolder(arg);
 			
-			JLabel l = new JLabel(arg.getName()+(arg.isOptional()?" (Optional)":""));
+			JLabel l = new JLabel(arg.getName());
 			dataPane.add(l);
 			argValues.put(arg.getName(), v);
 			l.setLabelFor(v.getComponent());
@@ -323,7 +323,7 @@ public class CommandDataPane implements ActionListener{
 			list.setSize(list.getMinimumSize());
 			list.setPreferredSize(list.getMinimumSize());
 			if(def!=null)
-				list.setSelectedItem(def);
+				list.setSelectedItem(val.get(def));
 		}
 
 		@Override

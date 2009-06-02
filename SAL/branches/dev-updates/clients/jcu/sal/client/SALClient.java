@@ -170,22 +170,17 @@ public class SALClient implements ClientEventHandler, StreamCallback{
 		r = cml.getResponseType();
 		boolean argOK=false, argsDone=false;
 		while(!argsDone) {			
-			for(String str: cf.listMissingArgNames()){
+			for(String str: cf.listArgNames()){
 				arg = cf.getArg(str);
 				argOK=false;
 				while(!argOK) {
 					System.out.println("Enter a value of type '"+arg.getType()+
-							"' for argument '"+str+"'"+(arg.isOptional()?" (Optional)":"") + (arg.hasDefaultValue()?"(default:"+arg.getDefaultValue()+")":""));
+							"' for argument '"+str+"' "+ (arg.hasDefaultValue()?"(default:"+arg.getDefaultValue()+")":""));
 					str2 = b.readLine();
 					try {cf.addArgumentValue(str, str2); argOK = true;}
 					catch (ArgumentNotFoundException e1) {
-						if(arg.isOptional()){
-							System.out.println("Wrong value - argument skipped");
-							argOK=true;
-						}else{
-							System.out.println("Wrong value");
-							argOK=false;
-						}
+						System.out.println("Wrong value");
+						argOK=false;
 					}
 				}
 

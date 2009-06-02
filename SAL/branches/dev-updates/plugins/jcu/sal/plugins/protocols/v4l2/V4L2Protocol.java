@@ -126,6 +126,7 @@ public class V4L2Protocol extends AbstractProtocol {
 		
 		for(Control c: v4l2c)
 			createCMLs(c, CMLDescriptionStore.CCD_KEY);
+		
 	}
 	
 	private void createCCDCML(){
@@ -155,8 +156,8 @@ public class V4L2Protocol extends AbstractProtocol {
 			name = "GetJPEGFrame";
 			desc = "Fetches a single JPEG-encoded frame";
 			args = new Vector<CMLArgument>();
-			args.add(new CMLArgument(CMLDescriptionStore.WIDTH_VALUE_NAME, ArgumentType.IntegerArgument, false, null));
-			args.add(new CMLArgument(CMLDescriptionStore.HEIGHT_VALUE_NAME, ArgumentType.IntegerArgument, false, null));
+			args.add(new CMLArgument(CMLDescriptionStore.WIDTH_VALUE_NAME, ArgumentType.IntegerArgument, "640"));
+			args.add(new CMLArgument(CMLDescriptionStore.HEIGHT_VALUE_NAME, ArgumentType.IntegerArgument, "480"));
 			
 			
 			for(InputInfo input: di.getInputs())
@@ -165,20 +166,19 @@ public class V4L2Protocol extends AbstractProtocol {
 			args.add(
 					new CMLArgument(CMLDescriptionStore.CHANNEL_VALUE_NAME, 
 							values, 
-							false,
-							null)
+							(String) (values.keySet().toArray()[0]))
 					);
 			values.clear();
 			
 			values.put(String.valueOf(V4L4JConstants.STANDARD_WEBCAM), "Webcam");
 			values.put(String.valueOf(V4L4JConstants.STANDARD_PAL), "PAL");
-			values.put(String.valueOf(V4L4JConstants.STANDARD_NTSC), "NTSC");
 			values.put(String.valueOf(V4L4JConstants.STANDARD_SECAM), "SECAM");
+			values.put(String.valueOf(V4L4JConstants.STANDARD_NTSC), "NTSC");
+			
 			args.add(
 					new CMLArgument(CMLDescriptionStore.STANDARD_VALUE_NAME,
 							values,
-							false,
-							null)
+							String.valueOf(V4L4JConstants.STANDARD_WEBCAM))
 					);
 			values.clear();		
 			
@@ -188,14 +188,12 @@ public class V4L2Protocol extends AbstractProtocol {
 			args.add(
 					new CMLArgument(CMLDescriptionStore.FORMAT_VALUE_NAME,
 							values,
-							false,
-							null)
+							(String) (values.keySet().toArray()[0]))
 					);
 				
 			
 			args.add(
 					new CMLArgument(CMLDescriptionStore.QUALITY_VALUE_NAME,
-							false,
 							V4L4JConstants.MIN_JPEG_QUALITY,
 							V4L4JConstants.MAX_JPEG_QUALITY,
 							1,
@@ -237,7 +235,7 @@ public class V4L2Protocol extends AbstractProtocol {
 			//setValue command
 			name = "Set"+ctrlName.replace(" ", "");
 			desc = "Sets the value of "+ctrlName;
-			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, false, c.getMinValue(), c.getMaxValue(), c.getStepValue(), c.getDefaultValue()));
+			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, c.getMinValue(), c.getMaxValue(), c.getStepValue(), c.getDefaultValue()));
 			addControl(c, key, SET_CONTROL_METHOD, name, desc, args, ResponseType.Void, null);
 		} else if (c.getType()==V4L4JConstants.CTRL_TYPE_SWITCH){
 			//getValue
@@ -248,7 +246,7 @@ public class V4L2Protocol extends AbstractProtocol {
 			//setValue command
 			name = "Set"+ctrlName.replace(" ", "");
 			desc = "Enable/disable  "+ctrlName;
-			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, false, 0, 1));
+			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, 0, 1, 1, c.getDefaultValue()));
 			addControl(c, key, SET_CONTROL_METHOD, name, desc, args, ResponseType.Void, null);
 		} else if (c.getType()==V4L4JConstants.CTRL_TYPE_DISCRETE){
 			Map<String,String> map = new Hashtable<String,String>();
@@ -264,7 +262,7 @@ public class V4L2Protocol extends AbstractProtocol {
 			desc = "Set the value of "+ctrlName;
 			for(int i=0; i<discreteNames.size();i++)
 				map.put(discreteValues.get(i).toString(), discreteNames.get(i));
-			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, map, false, null));
+			args.add(new CMLArgument(CMLDescriptionStore.CONTROL_VALUE_NAME, map,  null));
 			addControl(c, key, SET_CONTROL_METHOD, name, desc, args, ResponseType.Void, null);
 		} else {
 			logger.error("unknown control type '"+c.getType()+"'");

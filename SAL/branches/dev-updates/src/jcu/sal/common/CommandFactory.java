@@ -18,17 +18,19 @@ import org.apache.log4j.Logger;
 
 /**
  * CommandFactory objects are used to create correct {@link Command} objects which can then be given to SAL for execution.
- * To construct a {@link Command}ommand object, you first create a {@link CommandFactory} object and pass the {@link CMLDescription} 
- * for the {@link Command} you want to create, and a {@link StreamCallback} object where results of the command will be delivered. 
- * In order to obtian a {@link Command}, all the required command arguments must be supplied (as per the {@link CMLDescription}). 
- * For that, you iterate over a list of names of arguments which are still missing a value (the iterator is returned by 
- * {@link #listMissingArgNames()}). Some of these arguments may be optional, some are mandatory.
- * For each name, you can find out about the type of the missing value using
- * {@link #getArgType(String)}. You can then supply the value using one of the 
- * <code>addArgumentValue{Int,String,Callback,Float}()</code> methods. You can also use {@link #addArgumentValue(String, String)} and let
+ * To construct a {@link Command} object, you first create a {@link CommandFactory} object and pass the {@link CMLDescription} 
+ * for the {@link Command} you want to create, and a {@link StreamCallback} object where results of the command will be delivered.
+ * All command arguments have a default value If you wish to change the default value,  
+ * you can iterate over a list of names of arguments (the list is returned by 
+ * {@link #listArgNames()}).
+ * For each argument name, you can retrieve its {@link CMLArgument} object which provides
+ * information on the type of the value, the default value, ...
+ * You can then supply a new value using one of the 
+ * <code>addArgumentValue{Int,String,Float}()</code> methods. You can also use {@link #addArgumentValue(String, String)} and let
  * the {@link CommandFactory} do the type conversion for you. If you do, make sure you handle any returned exception.<br>
- * Once all arguments have been given a value, you can get an instance of a {@link Command} object by invoking {@link #getCommand()}.
- * If all the mandatory arguments have been assigned a value, this method will give you a {@link Command} object matching the {@link CMLDescription}.
+ * You can get an instance of a {@link Command} object by invoking {@link #getCommand()}.
+ * <b>Note that you must supply a {@link StreamCallback} object (either through {@link #CommandFactory(CMLDescription, StreamCallback)} or
+ * {@link #addCallBack(StreamCallback)}). Otherwise, {@link #getCommand()} will throw an exception.
  * 
  * @author gilles
  *
@@ -45,7 +47,6 @@ public class CommandFactory {
 	private Map<String, String> argValues;
 	private CMLDescription cml;
 	private Map<String,CMLArgument> args;
-	private List<String> missingArgs;
 	private StreamCallback callback;
 	private int interval;
 	
@@ -68,16 +69,14 @@ public class CommandFactory {
 	 * @param c the callback method that will be invoked to collect the results of the command
 	 */
 	public CommandFactory(CMLDescription desc, StreamCallback c){
+//		logger.debug("Creating command for CML:\n"+desc.getXMLString());
 		argValues = new Hashtable<String, String>();
-		missingArgs = new Vector<String>();
 		args = new Hashtable<String,CMLArgument>();
 		callback = c;
 		cml = desc;
 		interval = ONLY_ONCE;
-		for(CMLArgument a: desc.getArguments()){
+		for(CMLArgument a: desc.getArguments())
 			args.put(a.getName(), a);
-			missingArgs.add(a.getName());
-		}
 
 	}
 	
@@ -93,13 +92,11 @@ public class CommandFactory {
 	}
 	
 	/**
-	 * This method returns an Enumeration<String> of the argument names for which a 
-	 * value is missing. Some arguments in the list may be optional. Check the {@link CMLArgument}
-	 * associated with each argument.  
-	 * @return a List<String> of the argument names for which a value is missing
+	 * This method returns an Enumeration<String> of argument names.   
+	 * @return a List<String> of the argument names associated with the command
 	 */
-	public List<String> listMissingArgNames() {
-		return new Vector<String>(missingArgs);
+	public List<String> listArgNames() {
+		return new Vector<String>(args.keySet());
 	}
 	
 	/**
@@ -235,8 +232,10 @@ public class CommandFactory {
 	
 	/**
 	 * This method sets the sampling frequency of this command, ie
-	 * how often it will be run
-	 * @param i how often (in milliseconds) the command must be run
+	 * how often it will be run.
+	 * @param i how often (in milliseconds) the command must be run. Use 
+	 * {@link #CONTINUOUS_STREAM} to create a continuous stream (if supported)
+	 * or {@link #ONLY_ONCE} to run the command only once (always supported).
 	 * @throws ArgumentNotFoundException if this command can only be run once,
 	 * or if the given value is outside the allowed range.
 	 */
@@ -265,10 +264,10 @@ public class CommandFactory {
 	}
 	
 	/**
-	 * This method creates a new {@link Command} object, only if all the mandatory arguments have 
-	 * been assigned a value, and there is a {@link StreamCallback} object (if the ResponseType is not void).
+	 * This method creates a new {@link Command} object, provided 
+	 * there is a {@link StreamCallback} object.
+	 * @throws ConfigurationException if a {@link StreamCallback} has not been provided.
 	 * @return a new {@link Command} object
-	 * @throws ConfigurationException if some of the mandatory arguments still do not have a value
 	 */
 	public Command getCommand() throws ConfigurationException{
 		//make sure the callback is there
@@ -276,12 +275,10 @@ public class CommandFactory {
 			throw new ConfigurationException("Callback object missing");
 				
 		//Make sure we have all the args and their values
-		for(String name: args.keySet()){
-			if(!args.get(name).isOptional() && argValues.get(name)==null) {
-				logger.error("Value for mandatory argument '"+name+"' missing");
-				throw new ConfigurationException("value for mandatory argument '"+name+"' missing");
-			}
-		}
+		for(String name: args.keySet())
+			if(argValues.get(name)==null)
+				argValues.put(name, args.get(name).getDefaultValue());				
+		
 		return new Command(cml.getCID().intValue(), interval, argValues, callback);
 	}
 	
@@ -292,7 +289,6 @@ public class CommandFactory {
 	 */
 	private void addValue(String name, String val){
 		argValues.put(name, val);
-		missingArgs.remove(name);
 	}
 	
 	/**

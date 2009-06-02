@@ -197,7 +197,7 @@ public class CMLDescription {
 	
 	/**
 	 * This method returns the sampling frequency bounds, if this command
-	 * can be streamed. Otherwise, it will throw a {@link SALRunTimeException}.
+	 * can be streamed.
 	 * @return the sampling frequency bounds or null if this command cannot be streamed
 	 */
 	public SamplingBounds getSamplingBounds(){

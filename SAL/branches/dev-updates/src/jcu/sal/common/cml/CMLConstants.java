@@ -68,7 +68,7 @@ public interface CMLConstants {
 	 * updated in the CONTENT_TYPES array
 	 */
 	public static final String CONTENT_TYPE_JPEG="image/jpeg";
-	public static final String CONTENT_TYPE_RGB23="image/x-rgb";
+	public static final String CONTENT_TYPE_RGB24="image/x-rgb";
 	public static final String CONTENT_TYPE_IMAGE_RAW="image/raw";
 	public static final String CONTENT_TYPE_TEXT_PLAIN="text/plain";
 	
@@ -77,7 +77,7 @@ public interface CMLConstants {
 	 */
 	public static final String[] CONTENT_TYPES={
 		CONTENT_TYPE_JPEG,
-		CONTENT_TYPE_RGB23,
+		CONTENT_TYPE_RGB24,
 		CONTENT_TYPE_TEXT_PLAIN,
 		CONTENT_TYPE_IMAGE_RAW
 	};

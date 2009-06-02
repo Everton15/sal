@@ -21,9 +21,10 @@ public class CMLArgument {
 	private Argument argument;
 	private static final ObjectFactory factory = new ObjectFactory();
 
-	private CMLArgument(String name, boolean o){
+	private CMLArgument(String name){
 		argument = factory.createArgument();
-		argument.setOptional(o);
+		if(name==null)
+			throw new SALRunTimeException("CML arguments must be given a name");
 		argument.setName(name);
 	}
 	
@@ -38,17 +39,32 @@ public class CMLArgument {
 	
 	/**
 	 * This method build a CMLArgument of type {@link CMLConstants#ARG_TYPE_LIST}.
+	 * The first element in items is used as the default value.
 	 * @param type the type of this argument (see {@link CMLConstants}).
 	 * @param items a map of possible values and their textual names
 	 * @param optional if the argument is optional
-	 * @param def the default value, or null if there is no default
+	 * @param def the default value. If null, 
+	 * @throws SALRunTimeException if name or items is null
 	 */
-	public CMLArgument(String name, Map<String,String> items, boolean optional, String def){
-		this(name,optional);
+	public CMLArgument(String name, Map<String,String> items){
+		this(name, items, null);
+	}
+	
+	/**
+	 * This method build a CMLArgument of type {@link CMLConstants#ARG_TYPE_LIST}.
+	 * @param type the type of this argument (see {@link CMLConstants}).
+	 * @param items a map of possible values and their textual names
+	 * @param optional if the argument is optional
+	 * @param def the default value. If null, the first element in items is used
+	 * @throws SALRunTimeException if name or items is null
+	 */
+	public CMLArgument(String name, Map<String,String> items, String def){
+		this(name);
 		argument.setType(CMLConstants.ARG_TYPE_LIST);
 		addList(items);
-		if(def!=null)
-			argument.setDefaultValue(def);
+		if(def==null)
+			def = (String) (items.keySet().toArray()[0]);
+		argument.setDefaultValue(def);
 	}
 	
 	/**
@@ -58,11 +74,15 @@ public class CMLArgument {
 	 * Any other value will throw a {@link SALRunTimeException}.    
 	 * @param name the name of this argument.
 	 * @param type the type of this argument (see {@link CMLConstants}).
-	 * @param optional whether or not this argument is optional.
-	 * @param def the default value, or null if there is no default
+	 * @param def the default value. if null, 0 is used as default for FLOAT and INT,
+	 * and "" for STRING
+	 * @throws SALRunTimeException if name or type is null or invalid.
 	 */
-	public CMLArgument(String name, ArgumentType type, boolean optional, String def){
-		this(name,optional);
+	public CMLArgument(String name, ArgumentType type,String def){
+		this(name);
+		if(type==null)
+			throw new SALRunTimeException("No type provided");
+		
 		if(!type.equals(ArgumentType.FloatArgument)	&& 
 				!type.equals(ArgumentType.StringArgument) && 
 				!type.equals(ArgumentType.IntegerArgument))
@@ -79,94 +99,104 @@ public class CMLArgument {
 			catch(NumberFormatException e){ 
 				throw new SALRunTimeException("The default value is not of type int"); 
 			} 	
-			argument.setDefaultValue(def);
+		} else {
+			if(type.equals(ArgumentType.FloatArgument) || 
+					type.equals(ArgumentType.IntegerArgument))
+					def = "0";
+			else 
+				def = "";
 		}
-		
+		argument.setDefaultValue(def);
 		argument.setType(type.getType());
 		
 	}
 	
 	/**
-	 * This method build an bounded argument of type {@link CMLConstants#ARG_TYPE_FLOAT}
+	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_FLOAT}.
+	 * The default value is set to the mid-point between min and max 
+	 * (equal to min+(max-min)/2 ).
 	 * @param name the name of this argument
-	 * @param optional whether this argument is optional or not
 	 * @param min the min value
 	 * @param max the max value
 	 * @param step the step value, can be equal to 0, which means any value between min and max are valid
-	 * @throws SALRunTimeException if the minimum is greater than the maximum or
-	 * if the step value is negative
+	 * @throws SALRunTimeException if the minimum is greater than the maximum,
+	 * if the step value is negative or if name is null
 	 */
-	public CMLArgument(String name, boolean optional, float min, float max, float step){
-		this(name,optional);
+	public CMLArgument(String name, float min, float max, float step){
+		this(name, min, max, step, min + (max-min)/2);
+	}
+	
+	
+	/**
+	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_FLOAT}
+	 * @param name the name of this argument
+	 * @param min the min value
+	 * @param max the max value
+	 * @param step the step value, can be equal to 0, which means any value between min and max are valid
+	 * @param def the default value
+	 * @throws SALRunTimeException if the minimum is greater than the maximum,
+	 * if the step value is negative, if the default value is not within [min;max] 
+	 * or if name is null
+	 */
+	public CMLArgument(String name, float min, float max, float step, float def){
+		this(name);
 		if(min>max)
 			throw new SALRunTimeException("The minimum value is greater than the maximum");
 		if(step<0)
 			throw new SALRunTimeException("The step value is negative");
+		if(min>def || max<def)
+			throw new SALRunTimeException("The default value is not within [min;max]");
+		
 		argument.setType(CMLConstants.ARG_TYPE_FLOAT);
 		Bounds b = factory.createArgumentBounds();
 		b.setMin(String.valueOf(min));
 		b.setMax(String.valueOf(max));
 		b.setStep(String.valueOf(step));
-		argument.setBounds(b);		
-	}
-	
-	/**
-	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_FLOAT}
-	 * @param name the name of this argument
-	 * @param optional whether this argument is optional or not
-	 * @param min the min value
-	 * @param max the max value
-	 * @param step the step value, can be equal to 0, which means any value between min and max are valid
-	 * @param def the default value, or null if there is no default
-	 * @throws SALRunTimeException if the minimum is greater than the maximum or
-	 * if the step value is negative
-	 */
-	public CMLArgument(String name, boolean optional, float min, float max, float step, float def){
-		this(name,optional,min,max,step);
+		argument.setBounds(b);
 		argument.setDefaultValue(String.valueOf(def));
 	}
 	
 	/**
-	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_INT}
+	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_INT}.
+	 * The default value is set to the median point between min and max, rounded
+	 * to the closest lowest integer (equal to (int) (min+(max-min)/2) ).
 	 * @param name the name of this argument
-	 * @param optional whether this argument is optional or not
 	 * @param min the min value
 	 * @param max the max value
 	 * @param step the step value
-	 * @throws SALRunTimeException if the minimum is greater than the maximum or
-	 * if the step value is negative
+	 * @throws SALRunTimeException if the minimum is greater than the maximum,
+	 * , if the step value is negative or if name is null
 	 */
-	public CMLArgument(String name, boolean optional, int min, int max, int step){
-		this(name, optional, (float) min, (float)max, (float)step);
-		argument.setType(CMLConstants.ARG_TYPE_INT);
+	public CMLArgument(String name, int min, int max, int step){
+		this(name, min, max, step, min+(max-min)/2);
 	}
 	
 	/**
 	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_INT}
 	 * @param name the name of this argument
-	 * @param optional whether this argument is optional or not
 	 * @param min the min value
 	 * @param max the max value
 	 * @param step the step value
-	 * @throws SALRunTimeException if the minimum is greater than the maximum or
-	 * if the step value is negative
+	 * @param def the default value
+	 * @throws SALRunTimeException if the minimum is greater than the maximum,
+	 * if the default value is not within [min;max], if the step value is negative, 
+	 * or if name is null
 	 */
-	public CMLArgument(String name, boolean optional, int min, int max, int step, int def){
-		this(name, optional, min, max, step);
+	public CMLArgument(String name, int min, int max, int step, int def){
+		this(name);
+		if(min>max)
+			throw new SALRunTimeException("The minimum value is greater than the maximum");
+		if(step<0)
+			throw new SALRunTimeException("The step value is negative");
+		if(min>def || max<def)
+			throw new SALRunTimeException("The default value is not within [min;max]");
+		
+		Bounds b = factory.createArgumentBounds();
+		b.setMin(String.valueOf(min));
+		b.setMax(String.valueOf(max));
+		b.setStep(String.valueOf(step));
+		argument.setBounds(b);
 		argument.setDefaultValue(String.valueOf(def));
-	}
-	
-	/**
-	 * This method build a bounded argument of type {@link CMLConstants#ARG_TYPE_INT}
-	 * The step value is set to 1.
-	 * @param name the name of this argument
-	 * @param optional whether this argument is optional or not
-	 * @param min the min value
-	 * @param max the max value
-	 * @throws SALRunTimeException if the minimum is greater than the maximum
-	 */
-	public CMLArgument(String name, boolean optional, int min, int max){
-		this(name,optional, (float) min, (float)max, 1);
 		argument.setType(CMLConstants.ARG_TYPE_INT);
 	}
 	
@@ -176,14 +206,6 @@ public class CMLArgument {
 	 */
 	public String getName(){
 		return argument.getName();
-	}
-	
-	/**
-	 * This method returns whether this argument is optional
-	 * @return whether this argument is optional
-	 */
-	public boolean isOptional(){
-		return argument.isOptional();
 	}
 	
 	/**
@@ -382,6 +404,9 @@ public class CMLArgument {
 	 * {@link CMLConstants#ARG_TYPE_LIST}
 	 */
 	private void addList(Map<String,String> items){
+		if(items==null)
+			throw new SALRunTimeException("No item list provided");
+		
 		argument.setList(factory.createArgumentList());
 		List<Item> i = argument.getList().getItem();
 		Item item;
