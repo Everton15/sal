@@ -1,0 +1,28 @@
+#summary how to create a new SAL plugin
+
+This page explains how to create a new SAL plugin to support a new technology.
+
+All plugins require the following:
+  * a class which extends `jcu.sal.components.protocols.AbstractProtocol`
+  * a class containing a list of CML descriptions representing the potential commands the new plugin will support.
+
+= Extending AbstractProtocol =
+The `jcu.sal.plugins.protocols.dummy.DummyProtocol` class provides a simple example, which will we use here.
+== Constructor ==
+The constructor of the new plugin must have the following prototype:
+{{{
+NewPlugin(ProtocolID i, ProtocolConfiguration c)  throws ConfigurationException 
+}}}
+The constructor must also call the base class constructor with the following arguments:
+{{{
+super(i, PROTOCOL_TYPE, c);
+}}}
+The constructor should limit itself to intialising its members. *In particular, no parsing of the `Protocolonfiguration` object is allowed here.*
+
+The constructor must give to the `supportedEndPointTypes` member a list of end points the new plugin can be used with. An end point represents a physical IO port (Serial, USB, network interface...) or a file on a filesystem. Endpoints are located in the `jcu.sal.plugins.endpoints` package. To add an end point, locate the static string names `ENDPOINT_TYPE` in the required end point class and add it to `supportedEndPointTypes`. For example, to add the filesystem end point, use:
+{{{
+supportedEndPointTypes.add(FSEndPoint.ENDPOINT_TYPE);
+}}}
+
+== Overriding base-class methods ==
+A few methods in the `AbstractProtocol` base class are abstract and must be overriden in the new plugin.
