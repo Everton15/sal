@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<SAL>
+	<PlatformConfiguration>
+		<general>
+			<logging />
+			<readingDirectory>/home/sensor_user/readings</readingDirectory>
+		</general>
+		<protocols>
+			<Protocol name="EMS_SNMP" type="SSNMP">
+				<EndPoint name="eth1" type="ethernet">
+					<parameters>
+						<Parameter name="EthernetDevice" value="eth0" />
+					</parameters>
+				</EndPoint>
+				<parameters>
+					<Parameter name="AgentIP" value="192.168.0.2" />
+					<Parameter name="CommunityString" value="EMSOLUTIONS" />
+					<Parameter name="SNMPVersion" value="1" />
+					<Parameter name="Timeout" value="1500" />
+				</parameters>
+			</Protocol>
+		</protocols>
+	</PlatformConfiguration>
+</SAL>

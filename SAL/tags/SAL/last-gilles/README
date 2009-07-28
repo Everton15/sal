@@ -1,0 +1,43 @@
+SAL project-wide dependencies:
+
+ * log4j *
+log4j can be obtained from http://logging.apache.org/log4j/1.2
+Debian/Ubuntu package: liblog4j1.2-java
+
+SAL expects to find the following JAR file:
+/usr/share/log4j-1.2.jar
+
+
+SAL plugin dependencies:
+
+ * Serial Endpoint *
+requires the GNU implementation of the Java CommAPI from
+http://rxtx.qbang.org/wiki/index.php/Main_Page
+Also comes as a package in Ubuntu (librxtx-java)
+
+SAL expects to find the following JAR file:
+/usr/share/java/RXTXcomm.jar
+JNI libs in /usr/lib
+
+ * Simple SNMP endpoint *
+requires the WestHawk SNMP from http://snmp.westhawk.co.uk/
+This one is still shipped with SAL (in libs) and will be copied to
+/usr/share/java/snmp6_0.jar
+
+ * v4l4j protocol *
+v4l4j can be obtained from http://v4l4j.googlecode.com/svn/v4l4j/trunk
+
+SAL expects to find the following JAR file:
+/usr/share/java/v4l4j.jar
+
+JNI lib in /usr/lib/jni
+
+ * HAL helper *
+requires the HAL package from http://sal.googlecode.com/svn/HAL/trunk
+
+SAL expects to find the following JAR file:
+/usr/share/java/HAL.jar
+
+JNI lib in /usr/lib/jni
+
+

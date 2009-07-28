@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<SAL>
+	<SensorConfiguration>
+		<Sensor sid="1">
+			<parameters>
+				<Parameter name="ProtocolName" value="1wtree" />
+				<Parameter name="Address" value="10.7CCA0F010800" />
+			</parameters>
+		</Sensor>
+		<Sensor sid="2">
+			<parameters>
+				<Parameter name="ProtocolName" value="1wtree" />
+				<Parameter name="Address" value="10.AAA4E4000800" />
+			</parameters>
+		</Sensor>
+		<Sensor sid="3">
+			<parameters>
+				<Parameter name="ProtocolName" value="1wtree" />
+				<Parameter name="Address" value="10.B4CA0F010800" />
+			</parameters>
+		</Sensor>
+		<Sensor sid="4">
+			<parameters>
+				<Parameter name="ProtocolName" value="1wtree" />
+				<Parameter name="Address" value="26.0D7F61000000" />
+			</parameters>
+		</Sensor>
+		<Sensor sid="5">
+			<parameters>
+				<Parameter name="ProtocolName" value="1wtree" />
+				<Parameter name="Address" value="26.159061000000" />
+				<Parameter name="SamplingInterval" value="10" />
+			</parameters>
+		</Sensor>
+	</SensorConfiguration>
+</SAL>

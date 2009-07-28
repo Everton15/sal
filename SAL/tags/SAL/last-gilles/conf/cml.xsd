@@ -1,0 +1,107 @@
+<xsd:schema targetNamespace="http://sal.jcu.edu.au/schemas/CML"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://sal.jcu.edu.au/schemas/CML"
+        elementFormDefault="qualified" attributeFormDefault="unqualified"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+        
+        <xsd:element name="commandDescriptions">
+        	<xsd:complexType>
+        		<xsd:sequence>
+        			<xsd:element name="CommandDescription" type="tns:CommandDescription" minOccurs="1" maxOccurs="unbounded" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        </xsd:element>
+        
+        <xsd:complexType name="CommandDescription">
+        	<xsd:all>
+        		<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1" />
+	        	<xsd:element name="ShortDescription" type="xsd:string" minOccurs="1" maxOccurs="1" />
+	        	<xsd:element name="LongDescription" type="xsd:string" minOccurs="0" maxOccurs="1" />
+	        	<xsd:element name="Streaming" minOccurs="0" maxOccurs="1">
+	        		<xsd:complexType>
+	        			<xsd:all>
+	        				<xsd:element name="bounds">
+			        			<xsd:complexType>
+									<xsd:all>
+										<xsd:element name="min" type="xsd:int" />
+										<xsd:element name="max" type="xsd:int" />
+										<xsd:element name="step" type="xsd:int" minOccurs="0" />
+									</xsd:all>
+									<xsd:attribute name="continuous" type="xsd:boolean" use="required"/>
+								</xsd:complexType>
+			        		</xsd:element>
+	        			</xsd:all>
+	        		</xsd:complexType>
+	        	</xsd:element>
+	        	<xsd:element name="Response" type="tns:Response" minOccurs="1" maxOccurs="1" />
+       			<xsd:element name="arguments" minOccurs="1" maxOccurs="1">
+       				<xsd:complexType>
+       					<xsd:sequence>
+       						<xsd:element name="Argument" type="tns:Argument" minOccurs="0" maxOccurs="unbounded"/>
+       					</xsd:sequence>
+       				</xsd:complexType>
+       			</xsd:element>
+        	</xsd:all>
+        	<xsd:attribute name="cid" type="xsd:string" use="required"/>
+        </xsd:complexType>
+        
+		<xsd:complexType name="Response">
+    	    <xsd:attribute name="type" type="xsd:string" use="required"/>
+   			<xsd:attribute name="contentType" type="xsd:string" use="optional"/>
+   			<xsd:attribute name="unit" type="xsd:string" use="optional"/>
+   		</xsd:complexType>      
+       
+        <xsd:complexType name="Argument">
+        	<!-- 
+        		Choice of list, bound or nothing
+        		if a new element is added, update the "type" attribute too
+        		(right at the end of the choice)
+        	 -->
+        	<xsd:choice minOccurs="0">
+        		<xsd:element name="list">
+        			<xsd:complexType>
+			        	<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+			        		<xsd:element name="item">
+			        			<xsd:complexType>
+			        				<xsd:simpleContent>
+			        				<xsd:extension base="xsd:string">
+			        					<xsd:attribute name="id" type="xsd:string"/>
+			        				</xsd:extension>
+			        				</xsd:simpleContent>
+			        			</xsd:complexType>
+			        		</xsd:element>
+			        	</xsd:sequence>
+		        	</xsd:complexType>
+        		</xsd:element>
+        		<xsd:element name="bounds">
+        			<xsd:complexType>
+						<xsd:all>
+							<xsd:element name="min" type="xsd:string" />
+							<xsd:element name="max" type="xsd:string" />
+							<xsd:element name="step" type="xsd:string" minOccurs="0" />
+						</xsd:all>
+					</xsd:complexType>
+        		</xsd:element>
+        	</xsd:choice>
+        	<!--
+        		Update the following attribute to support more argument types 
+        	 -->
+        	<xsd:attribute name="type" use="required">
+        		<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="int"/>
+						<xsd:enumeration value="float"/>
+						<xsd:enumeration value="string"/>
+						<xsd:enumeration value="list"/>
+						<xsd:enumeration value="button"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+        	</xsd:attribute>
+        	<xsd:attribute name="name" type="xsd:string" use="required"/>
+        	<xsd:attribute name="defaultValue" type="xsd:string" use="required"/>
+        </xsd:complexType>
+        
+        
+        
+</xsd:schema>

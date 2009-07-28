@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://sal.jcu.edu.au/schemas/pluginsConfig"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://sal.jcu.edu.au/schemas/pluginsConfig"
+        elementFormDefault="qualified" attributeFormDefault="unqualified"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+
+
+        <xsd:element name="SalPlugins">
+        <xsd:complexType>
+                <xsd:sequence>
+                        <xsd:element name="ConfigHelpers" type="tns:ConfigHelpersType" minOccurs="1" maxOccurs="1" />
+                        <xsd:element name="ProtocolPlugins" type="tns:ProtocolPluginsType" minOccurs="1" maxOccurs="1" />
+                        <xsd:element name="EndPointPlugins" type="tns:EndPointPluginsType" minOccurs="1" maxOccurs="1" />
+                </xsd:sequence>
+        </xsd:complexType>
+        </xsd:element>
+               
+        <xsd:complexType name="ConfigHelpersType">
+                <xsd:sequence>
+                        <xsd:element name="Helper" type="tns:NameClassType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+        </xsd:complexType>
+
+		<xsd:complexType name="ProtocolPluginsType">
+                <xsd:sequence>
+                        <xsd:element name="Protocol" type="tns:ProtocolType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+        </xsd:complexType>
+
+        <xsd:complexType name="ProtocolType">
+                <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="class" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="ConfigPlugin" type="tns:HelperNameClassType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+        </xsd:complexType>
+        
+        <xsd:complexType name="EndPointPluginsType">
+                <xsd:sequence>
+                        <xsd:element name="EndPoint" type="tns:NameClassType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+        </xsd:complexType>
+        
+        <xsd:complexType name="HelperNameClassType">
+                <xsd:sequence>
+                        <xsd:element name="HelperName" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="class" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                </xsd:sequence>
+        </xsd:complexType> 
+
+        <xsd:complexType name="NameClassType">
+                <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="class" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                </xsd:sequence>
+        </xsd:complexType> 
+
+</xsd:schema>

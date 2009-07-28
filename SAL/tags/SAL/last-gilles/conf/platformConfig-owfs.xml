@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<SAL>
+	<PlatformConfiguration>
+		<general>
+			<logging />
+			<readingDirectory>/home/sensor_user/readings</readingDirectory>
+		</general>
+		<protocols>
+			<Protocol name="1wtree" type="owfs">
+				<EndPoint name="usb" type="usb" />
+				<parameters>
+					<Parameter name="Location" value="/opt/owfs/bin/owfs" />
+					<Parameter name="MountPoint" value="/mnt/w1" />
+				</parameters>
+			</Protocol>
+		</protocols>
+	</PlatformConfiguration>
+</SAL>

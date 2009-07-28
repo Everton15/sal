@@ -1,0 +1,434 @@
+ <commandDescriptions>
+ <CommandDescription cid="1000">
+ 	<Name>GetFrame</Name>
+ 	<ShortDescription>Reads a single frame</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="width" />
+ 		<Argument type="int" name="height" />
+ 		<Argument type="int" name="channel" />
+ 		<Argument type="int" name="standard" />
+ 		<Argument type="int" name="quality" />
+ 		<Argument type="list" name="format" optional="true">
+ 			<list>
+ 				<item value="3">RGB24</item>
+ 				<item value="2">JPEG</item>
+ 			</list>
+ 		</Argument>
+ 		<Argument type="button" name="resetParams" optional="true">0</Argument>
+ 		
+ 	
+ 	</arguments>
+ 	<Result type="byte array" contents="image/jpeg"/>
+ </CommandDescription>
+ <CommandDescription cid="1008">
+ 	<Name>SetPan/Tiltreset</Name>
+ 	<ShortDescription>Sets the value of Pan/Tilt reset</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1031">
+ 	<Name>GetSaturation</Name>
+ 	<ShortDescription>Fetches the value of Saturation</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1010">
+ 	<Name>SetAutoGainEnabled</Name>
+ 	<ShortDescription>Sets the value of Auto Gain Enabled</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1013">
+ 	<Name>GetContour</Name>
+ 	<ShortDescription>Fetches the value of Contour</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1012">
+ 	<Name>SetContrast</Name>
+ 	<ShortDescription>Sets the value of Contrast</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1024">
+ 	<Name>SetFlickerless</Name>
+ 	<ShortDescription>Sets the value of Flickerless</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1037">
+ 	<Name>GetRestoreFactorySettings</Name>
+ 	<ShortDescription>Fetches the value of Restore Factory Settings</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1044">
+ 	<Name>SetTilt</Name>
+ 	<ShortDescription>Sets the value of Tilt</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1007">
+ 	<Name>GetPan/Tiltreset</Name>
+ 	<ShortDescription>Fetches the value of Pan/Tilt reset</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1006">
+ 	<Name>SetRedGain</Name>
+ 	<ShortDescription>Sets the value of Red Gain</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1035">
+ 	<Name>GetSaveUserSettings</Name>
+ 	<ShortDescription>Fetches the value of Save User Settings</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1016">
+ 	<Name>SetNoisereduction</Name>
+ 	<ShortDescription>Sets the value of Noise reduction</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1021">
+ 	<Name>GetRestoreUserSettings</Name>
+ 	<ShortDescription>Fetches the value of Restore User Settings</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1023">
+ 	<Name>GetFlickerless</Name>
+ 	<ShortDescription>Fetches the value of Flickerless</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1040">
+ 	<Name>SetBlueGain</Name>
+ 	<ShortDescription>Sets the value of Blue Gain</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1041">
+ 	<Name>GetShutterSpeed(Exposure)</Name>
+ 	<ShortDescription>Fetches the value of Shutter Speed (Exposure)</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1027">
+ 	<Name>GetGainLevel</Name>
+ 	<ShortDescription>Fetches the value of Gain Level</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1026">
+ 	<Name>SetBrightness</Name>
+ 	<ShortDescription>Sets the value of Brightness</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1019">
+ 	<Name>GetBacklightcompensation</Name>
+ 	<ShortDescription>Fetches the value of Backlight compensation</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1028">
+ 	<Name>SetGainLevel</Name>
+ 	<ShortDescription>Sets the value of Gain Level</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1018">
+ 	<Name>SetColourmode</Name>
+ 	<ShortDescription>Sets the value of Colour mode</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1025">
+ 	<Name>GetBrightness</Name>
+ 	<ShortDescription>Fetches the value of Brightness</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1020">
+ 	<Name>SetBacklightcompensation</Name>
+ 	<ShortDescription>Sets the value of Backlight compensation</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="103">
+ 	<Name>stopStream</Name>
+ 	<ShortDescription>Stops a JPEG stream</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1014">
+ 	<Name>SetContour</Name>
+ 	<ShortDescription>Sets the value of Contour</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1043">
+ 	<Name>GetTilt</Name>
+ 	<ShortDescription>Fetches the value of Tilt</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1029">
+ 	<Name>GetGamma</Name>
+ 	<ShortDescription>Fetches the value of Gamma</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1048">
+ 	<Name>SetPan</Name>
+ 	<ShortDescription>Sets the value of Pan</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1039">
+ 	<Name>GetBlueGain</Name>
+ 	<ShortDescription>Fetches the value of Blue Gain</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1038">
+ 	<Name>SetRestoreFactorySettings</Name>
+ 	<ShortDescription>Sets the value of Restore Factory Settings</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1032">
+ 	<Name>SetSaturation</Name>
+ 	<ShortDescription>Sets the value of Saturation</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1015">
+ 	<Name>GetNoisereduction</Name>
+ 	<ShortDescription>Fetches the value of Noise reduction</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1045">
+ 	<Name>GetAutoWhiteBalance</Name>
+ 	<ShortDescription>Fetches the value of Auto White Balance</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1001">
+ 	<Name>StartStream</Name>
+ 	<ShortDescription>Starts a new JPEG stream</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="width" />
+ 		<Argument type="int" name="height" />
+ 		<Argument type="int" name="channel" />
+ 		<Argument type="int" name="standard" />
+ 		<Argument type="int" name="quality" />
+ 		<Argument type="callback" name="Callback" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1033">
+ 	<Name>GetAutocontour</Name>
+ 	<ShortDescription>Fetches the value of Auto contour</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1047">
+ 	<Name>GetPan</Name>
+ 	<ShortDescription>Fetches the value of Pan</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1002">
+ 	<Name>StopStream</Name>
+ 	<ShortDescription>Stops a JPEG stream</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1042">
+ 	<Name>SetShutterSpeed(Exposure)</Name>
+ 	<ShortDescription>Sets the value of Shutter Speed (Exposure)</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1009">
+ 	<Name>GetAutoGainEnabled</Name>
+ 	<ShortDescription>Fetches the value of Auto Gain Enabled</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1005">
+ 	<Name>GetRedGain</Name>
+ 	<ShortDescription>Fetches the value of Red Gain</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="1003">
+ 	<Name>StopStreamFake</Name>
+ 	<ShortDescription>Stops a fake JPEG stream</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1011">
+ 	<Name>GetContrast</Name>
+ 	<ShortDescription>Fetches the value of Contrast</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="10">
+ 	<Name>enable</Name>
+ 	<ShortDescription>Enables the sensor</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1036">
+ 	<Name>SetSaveUserSettings</Name>
+ 	<ShortDescription>Sets the value of Save User Settings</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1034">
+ 	<Name>SetAutocontour</Name>
+ 	<ShortDescription>Sets the value of Auto contour</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1004">
+ 	<Name>StartStreamFake</Name>
+ 	<ShortDescription>Starts a new fake JPEG stream</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1030">
+ 	<Name>SetGamma</Name>
+ 	<ShortDescription>Sets the value of Gamma</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="11">
+ 	<Name>disable</Name>
+ 	<ShortDescription>Disables the sensor</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1046">
+ 	<Name>SetAutoWhiteBalance</Name>
+ 	<ShortDescription>Sets the value of Auto White Balance</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="1022">
+ 	<Name>SetRestoreUserSettings</Name>
+ 	<ShortDescription>Sets the value of Restore User Settings</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="value" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ <CommandDescription cid="100">
+ 	<Name>getReading</Name>
+ 	<ShortDescription>Reads a single frame</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="width" />
+ 		<Argument type="int" name="height" />
+ 		<Argument type="int" name="channel" />
+ 		<Argument type="int" name="standard" />
+ 		<Argument type="int" name="quality" />
+ 	</arguments>
+ 	<ReturnType type="byte array" />
+ </CommandDescription>
+ <CommandDescription cid="1017">
+ 	<Name>GetColourmode</Name>
+ 	<ShortDescription>Fetches the value of Colour mode</ShortDescription>
+ 	<arguments>
+ 	</arguments>
+ 	<ReturnType type="int" />
+ </CommandDescription>
+ <CommandDescription cid="102">
+ 	<Name>startStream</Name>
+ 	<ShortDescription>Starts a new JPEG stream</ShortDescription>
+ 	<arguments>
+ 		<Argument type="int" name="width" />
+ 		<Argument type="int" name="height" />
+ 		<Argument type="int" name="channel" />
+ 		<Argument type="int" name="standard" />
+ 		<Argument type="int" name="quality" />
+ 		<Argument type="callback" name="Callback" />
+ 	</arguments>
+ 	<ReturnType type="void" />
+ </CommandDescription>
+ </commandDescriptions>
+

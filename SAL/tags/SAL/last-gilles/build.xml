@@ -1,0 +1,231 @@
+<project name="SAL" default="usage">
+
+	
+	<property file="build.properties"/>
+	
+	<!-- define the project-wide dependencies classpath for
+	building & running -->
+	<path id="project.dependencies.classpath">
+		<fileset dir="${platform.standard.jar.location}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- define the classpath for building common package -->
+	<path id="build.common.classpath">
+		<path refid="project.dependencies.classpath"/>
+	</path>
+
+	<!-- define the classpath for building agent package-->
+	<path id="build.agent.classpath">
+		<path refid="project.dependencies.classpath"/>
+	</path>
+	
+	<!-- define the classpath for building clients package-->
+	<path id="build.clients.classpath">
+		<path refid="project.dependencies.classpath"/>
+		<pathelement location="${project.agent.classes}" />
+	</path>
+	
+	<!-- define the classpath for building plugins package-->
+	<path id="build.plugins.classpath">
+		<path refid="project.dependencies.classpath"/>
+		<!-- plugins need abstract classes & interfaces from agent -->
+		<pathelement location="${project.agent.classes}" />
+		<pathelement location="${plugins.deps.sunspot.dir}/" />
+		<filelist dir="${plugins.deps.sunspot.dir}" 
+			files="${plugins.deps.sunspot.jarlist}"/>
+	</path>
+	
+	<!-- define the agent classpath for running -->
+	<path id="run.agent.classpath">
+		<fileset dir="${project.dir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- define the client classpath for running -->
+	<path id="run.client.classpath">
+		<fileset dir="${project.dir}">
+			<include name="${project.clients.jar}"/>
+			<include name="${project.common.jar}"/>
+		</fileset>
+	</path>
+
+	
+	<!-- default target that displays usage -->
+	<target name="usage">
+		<echo message=""/>
+		<echo message="Sensor Abstraction Layer"/>
+		<echo message=""/>
+		<echo message="Available targets :"/>
+		<echo message=""/>
+		<echo message=" init:         Must be run as root at least once before any other targets"/>
+		<echo message=" jar-agent:    Create a JAR file with classes needed by SAL agents"/>
+		<echo message=" jar-client:   Create a JAR file with SAL client classes"/>
+		<echo message=" jar-common:   Create a JAR file with classes needed by SAL clients"/>
+		<echo message=" jar-plugins:  Create a JAR file with classes needed by SAL agent plugins"/>
+		<echo message=" jar-all:      Create all 4 JAR files mentioned above"/>
+		<echo message=" clean:        Remove all build generated files"/>
+		<echo message=""/>
+	</target>
+	
+	<target name="dep">
+		<copy file="${project.lib}/${plugins.deps.snmp.jar}" tofile="${platform.standard.jar.location}/${plugins.deps.snmp.jar}" />
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${project.agent.classes}" />
+		<mkdir dir="${project.clients.classes}" />
+		<mkdir dir="${project.plugins.classes}" />
+	</target>
+	
+	<target name="compile-agent" depends="init, compile-common">
+		<javac srcdir="${project.agent.src}" destdir="${project.agent.classes}" deprecation="on" source="${source}" debug="on">
+			<classpath refid="build.agent.classpath" />
+		</javac>
+	</target>
+	
+	<target name="compile-clients" depends="init, compile-common, compile-agent">
+		<javac srcdir="${project.clients.src}" destdir="${project.clients.classes}" deprecation="on" source="${source}" debug="on">
+			<classpath refid="build.clients.classpath" />
+		</javac>
+	</target>
+	
+	<target name="compile-plugins" depends="compile-agent">
+			<javac srcdir="${project.plugins.src}" destdir="${project.plugins.classes}" deprecation="on" source="${source}" debug="on">
+				<classpath refid="build.plugins.classpath"/>
+			</javac>
+		</target>
+	
+	<target name="compile-common" depends="init">
+		<javac srcdir="${project.agent.src}" destdir="${project.agent.classes}" deprecation="on" source="${source}" debug="on">
+			<classpath refid="build.common.classpath"/>
+			<include name="jcu/sal/common/**"/>
+		</javac>
+	</target>
+	
+	<target name="jar-agent" depends="compile-agent, jar-common">
+		<jar jarfile="${project.agent.jar}">
+			<manifest>
+				<attribute name="Class-Path" value="${project.plugins.jar} ${project.common.jar} ${project.deps.list}"/>
+			</manifest>
+			<fileset dir="${project.agent.classes}">
+				<include name="**"/>
+				<exclude name="jcu/sal/common/**"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="jar-clients" depends="jar-common, compile-clients">
+		<jar jarfile="${project.clients.jar}">
+			<manifest>
+				<attribute name="Class-Path" value="${project.deps.list} ${project.common.jar}"/>
+			</manifest>
+			<fileset dir="${project.clients.classes}">
+				<include name="**"/>
+			</fileset>
+			<fileset dir="${project.dir}">
+				<include name="resources/**" />
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="jar-common" depends="compile-common">
+		<jar jarfile="${project.dir}/${project.common.jar}">
+			<fileset dir="${project.agent.classes}">
+				<include name="jcu/sal/common/**"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="jar-plugins" depends="compile-plugins, jar-common">
+		<jar jarfile="${project.dir}/${project.plugins.jar}">
+			<manifest>
+				<attribute name="Class-Path" value="${plugins.deps.list}"/>
+			</manifest>
+			<fileset dir="${project.plugins.classes}">
+				<include name="**"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="jar-all" depends="jar-common, jar-agent, jar-plugins, jar-clients" />
+	
+	<target name="run-rmi-agent" depends="jar-agent, jar-plugins">
+		<delete file="${project.run.rmi.agent.arg2}"/>
+		<delete file="${project.run.rmi.agent.arg3}"/>
+			<java fork="true" classname="${project.run.rmi.agent.main.class}">
+				<arg value="${project.run.rmi.agent.arg1}"/>
+				<arg value="${project.run.rmi.agent.arg2}"/>
+				<arg value="${project.run.rmi.agent.arg3}"/>
+				<jvmarg value="-Djava.library.path=${plugins.deps.JNIlib.list}"/>
+				<jvmarg value="-Djcu.sal.plugin.configFile=${jcu.sal.plugin.configFile}"/>
+				<jvmarg value="-Djava.rmi.server.codebase=file:${basedir}/${project.common.jar}" />
+				<jvmarg value="-Djava.rmi.server.hostname=${project.run.rmi.agent.arg1}" />
+				<classpath refid="run.agent.classpath" />
+				<jvmarg value="-Dcom.sun.management.jmxremote.port=56565" />
+				<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+				<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
+			</java>
+	</target>
+	
+	<target name="run-rmi-client" depends="jar-clients">
+			<java fork="true" classname="${project.run.rmi.client.main.class}">
+				<arg value="${project.run.rmi.client.arg1}"/>
+				<arg value="${project.run.rmi.client.arg2}"/>
+				<arg value="${project.run.rmi.client.arg3}"/>
+				<jvmarg value="-Djava.rmi.server.codebase=file:${project.common.jar}" />
+				<!-- <jvmarg value="-Djava.rmi.server.hostname=" /> -->
+				<classpath refid="run.client.classpath" />
+			</java>
+	</target>
+	
+	<target name="run-rmi-client-gui" depends="jar-clients">
+			<java fork="true" classname="${project.run.rmi.client.gui.main.class}">
+				<arg value="${project.run.rmi.client.gui.arg1}"/>
+				<jvmarg value="-Djava.rmi.server.codebase=file:${basedir}/${project.common.jar}" />
+				<classpath refid="run.client.classpath" />
+			</java>
+	</target>
+	
+	<target name="run-local-client" depends="jar-all">
+		<delete file="${project.run.local.client.arg1}"/>
+		<delete file="${project.run.local.client.arg2}"/>
+			<java fork="true" classname="${project.run.local.client.main.class}">
+				<arg value="${project.run.local.client.arg1}"/>
+				<arg value="${project.run.local.client.arg2}"/>
+				<classpath refid="run.agent.classpath" />
+				<jvmarg value="-Djava.library.path=${plugins.deps.JNIlib.list}"/>
+				<jvmarg value="-Djcu.sal.plugin.configFile=${jcu.sal.plugin.configFile}"/>
+			</java>
+	</target>
+
+<!--	<target name="run" depends="compile">
+			<java fork="true" failonerror="true" classname="${project.run.main.class}">
+				<arg value="${project.run.arg1}"/>
+				<arg value="${project.run.arg2}"/>
+				<jvmarg value="-Djava.library.path=${project.lib}:${HAL.lib}:${v4l4j.lib}"/>
+				<classpath refid="run.SAL.classpath" />
+			</java>
+	</target>
+	
+	<target name="stressTest" depends="compile">
+			<java fork="true" failonerror="true" classname="${project.run.stressTest.class}">
+				<arg value="${project.run.arg1}"/>
+				<arg value="${project.run.arg2}"/>
+				<jvmarg value="-Djava.library.path=${project.lib}:${HAL.lib}:${v4l4j.lib}"/>
+				<classpath refid="run.SAL.classpath" />
+			</java>
+	</target>-->
+	
+	<target name="clean">
+		<delete dir="${project.agent.classes}"/>
+		<delete dir="${project.clients.classes}"/>
+		<delete dir="${project.plugins.classes}"/>
+		<delete file="${project.agent.jar}"/>
+		<delete file="${project.common.jar}"/>
+		<delete file="${project.plugins.jar}"/>
+		<delete file="${project.clients.jar}"/>
+	</target>
+     </project>

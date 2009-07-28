@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<SAL>
+	<PlatformConfiguration>
+		<general>
+			<logging />
+			<readingDirectory>/home/sensor_user/readings</readingDirectory>
+		</general>
+		<protocols>
+			<Protocol name="osData" type="PlatformData">
+				<EndPoint name="filesystem" type="fs" />
+				<parameters>
+					<Parameter name="CPUTempFile" value="/sys/class/hwmon/hwmon0/device/temp1_input" />
+					<Parameter name="NBTempFile" value="/sys/class/hwmon/hwmon0/device/temp3_input" />
+					<Parameter name="SBTempFile" value="/sys/class/hwmon/hwmon0/device/temp2_input" />
+				</parameters>
+			</Protocol>
+		</protocols>
+	</PlatformConfiguration>
+</SAL>
