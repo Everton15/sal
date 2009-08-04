@@ -1,0 +1,53 @@
+#summary how to flash SunSPOTs so they can be used by a SAL agent
+#labels Featured
+
+In order to get a SAL agent to talk to [http://www.sunspotworld.com SunSPOT nodes], these must be flash (once only) with a piece of software which enables communication between the SunSPOT node and the SAL SunSPOT plugin.
+
+Steps to flash a SunSPOT:
+ * make sure the SunSPOT SDK is installed.
+ * check out the SAL SunSPOT code
+ * build it and flash the SunSPOT node
+
+= SunSPOT SDK installation =
+
+*Make sure you have a JDK already installed.*
+
+To flash a SunSPOT, the SunSPOT SDK must first be installed. Follow the instructions on [http://www.sunspotworld.com/GettingStarted/index.html this page].
+
+Confirm everything is correctly installed and the SunSPOT node working and recognised by:
+ * connecting the SunSPOT
+ * running the SunSPOT manager (shortcut on the desktop)
+ * selecting the "SunSPOT" tab
+ * clicking the "Refresh" button
+ * clicking the "Spot info" button
+If all goes well, some details about the SunSPOT should be listed on the screen.
+
+*Make sure you upgrade the SunSPOT node's firmware if told so by the SunSPOT manager.*
+
+= Check out the SAL SunSPOT code =
+
+The SAL SunSPOT code is stored in the sam subversion as SAL and can be downloaded with:
+{{{
+svn co http://sal.googlecode.com/svn/platforms/SunSPOT/SALSunSPOT
+}}}
+
+The code will be downloaded and stored in the `SALSunSPOT` directory.
+
+= Building and flashing =
+Make sure the SunSPOT you want to flash is connected. If more than one SunSPOT is connected, note the address of the one to be flashed (the last 8 bytes can be found underneath the node).
+This is done using:
+{{{
+cd SALSunSPOT
+ant clean build deploy
+}}}
+If more than one SunSPOT is connected, this will ask you to choose which node to flash.
+
+== Restarting the SunSPOT ==
+Once the node is flashed, restart it by pressing the button (short push). 
+
+== LED indicator ==
+When the node is connected to the computer via the USB cable, the LEDs show the current battery charge. When the node is disconnected, the battery charge can be viewed by pressing the left switch (under the cover).
+
+The front LED (next to the button), indicates whether the node is currently connected to a SAL agent:
+ * a green pulse means the node is currently connected to a SAL agent.
+ * a red pulse means the node is not connected and looking for a SAL agent.
