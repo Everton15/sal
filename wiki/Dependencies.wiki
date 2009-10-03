@@ -5,14 +5,14 @@ This page explains how to download and install SAL and its dependencies
 = Pre-requisites =
 
 In order for SAL to support a sensing technology, required software must be installed prior to compiling SAL. This section lists all currently supported technologies and explains how to obtain and install their dependencies.
-*SAL expects to find all JAR files in `/usr/share/java`.*
+*SAL expects to find all JAR files in `/usr/share/java`, except for the SunSPOT SDK (see SunSPOT section below).*
 
 == log4j ==
 SAL uses log4j to log debug statements. log4j can be obtained from  [http://logging.apache.org/log4j/1.2] . On Debian/Ubuntu, you can simply `sudo apt-get install liblog4j1.2-java` .
 
 == Registration with Bonjour ==
 SAL agents register themselves with Bonjour so they can be automatically discovered by clients. SAL uses Avahi4J to handle Bonjour interactions. Avahi4J can be found at http://avahi4j.googlecode.com
-Avahi4J must be installed before attempting to build SAL (see "Getting Started" page at Avahi4J website for more information)
+Avahi4J must be installed before attempting to build SAL (see "Getting Started" page at Avahi4J website for more information).
 
 == Serial devices ==
 Communication with serial devices requires the GNU implementation of the Java Comm API, which can be obtained from [http://rxtx.qbang.org/wiki/index.php/Main_Page this page]. Under Debian/Ubuntu, you can simply `sudo apt-get install librxtx-java`. 
