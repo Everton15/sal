@@ -10,6 +10,13 @@ SAL expects to find the following JAR file:
 
 SAL plugin dependencies:
 
+ * Registration with Bonjour *
+ SAL requires Avahi4J so agents can register with Bonjour, and clients can
+ discover them at run-time. Avahi4J can be found at http://avahi4j.googlecode.com
+ 
+ SAL expects to find the Avahi4J's JAR file in /usr/share/java/avahi4j.jar and
+ its JNI library in /usr/lib/jni
+
  * Serial Endpoint *
 requires the GNU implementation of the Java CommAPI from
 http://rxtx.qbang.org/wiki/index.php/Main_Page
