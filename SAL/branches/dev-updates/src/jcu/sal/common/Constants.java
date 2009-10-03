@@ -1,6 +1,10 @@
 package jcu.sal.common;
 
 public interface Constants {
+	/**
+	 * The SAL service type as advertised with Bonjour 
+	 */
+	public static final String SAL_SERVICE_TYPE = "_sal._tcp";
 	
 	/**
 	 * the type returned by local SAL agent

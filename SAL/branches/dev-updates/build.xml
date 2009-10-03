@@ -60,7 +60,7 @@
 		<echo message=""/>
 		<echo message="Available targets :"/>
 		<echo message=""/>
-		<echo message=" init:         Must be run as root at least once before any other targets"/>
+		<echo message=" dep:          Must be run as root at least once before any other targets"/>
 		<echo message=" jar-agent:    Create a JAR file with classes needed by SAL agents"/>
 		<echo message=" jar-client:   Create a JAR file with SAL client classes"/>
 		<echo message=" jar-common:   Create a JAR file with classes needed by SAL clients"/>
@@ -159,7 +159,8 @@
 				<arg value="${project.run.rmi.agent.arg1}"/>
 				<arg value="${project.run.rmi.agent.arg2}"/>
 				<arg value="${project.run.rmi.agent.arg3}"/>
-				<jvmarg value="-Djava.library.path=${plugins.deps.JNIlib.list}"/>
+				<arg value="${project.run.rmi.agent.arg4}"/>
+				<jvmarg value="-Djava.library.path=${project.deps.JNIlib.list}:${plugins.deps.JNIlib.list}"/>
 				<jvmarg value="-Djcu.sal.plugin.configFile=${jcu.sal.plugin.configFile}"/>
 				<jvmarg value="-Djava.rmi.server.codebase=file:${basedir}/${project.common.jar}" />
 				<jvmarg value="-Djava.rmi.server.hostname=${project.run.rmi.agent.arg1}" />
@@ -184,6 +185,7 @@
 	<target name="run-rmi-client-gui" depends="jar-clients">
 			<java fork="true" classname="${project.run.rmi.client.gui.main.class}">
 				<arg value="${project.run.rmi.client.gui.arg1}"/>
+				<jvmarg value="-Djava.library.path=${project.deps.JNIlib.list}"/>
 				<jvmarg value="-Djava.rmi.server.codebase=file:${basedir}/${project.common.jar}" />
 				<classpath refid="run.client.classpath" />
 			</java>

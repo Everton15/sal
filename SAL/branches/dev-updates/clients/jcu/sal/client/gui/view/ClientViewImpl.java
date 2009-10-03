@@ -25,8 +25,8 @@ import jcu.sal.common.exceptions.ConfigurationException;
 import jcu.sal.common.exceptions.NotFoundException;
 
 public class ClientViewImpl extends AbstractClientView implements ActionListener{
-	
 	private static String ActionAddRMIAgent = "addRMI";
+	private static String ActionListRMIAgent = "listRMI";
 	private static String ActionRemoveRMIAgent = "removeRMI";
 	private static String ActionQuit = "quit";
 
@@ -107,20 +107,22 @@ public class ClientViewImpl extends AbstractClientView implements ActionListener
 	}
 	
 	/**
-	 * This method is called when the user selected the "Connect to RMI Agent" menu item.
-	 * It asks the user for the IP addresses of RMI registries, creates the client stub
-	 * and updates the GUI 
+	 * This method displays a list of network interfaces and their IP address 
+	 * on this machine, and lets the user select one interface.
+	 * @return the ip address of the selected network interface, or null if there
+	 * is an error listing the interfaces' IP address
 	 */
-	public void addRmiAgent(){
-		Vector<String> v;
+	private String showLocalInterfaces() {
+		Vector<String> interfaceList;
+		
 		try {
-			v = new Vector<String>();
+			interfaceList = new Vector<String>();
 			Enumeration<NetworkInterface> i = NetworkInterface.getNetworkInterfaces();
 			Enumeration<InetAddress> add;
 			while(i.hasMoreElements()){
 				add = i.nextElement().getInetAddresses();
 				while(add.hasMoreElements())
-					v.add(add.nextElement().getHostAddress());
+					interfaceList.add(add.nextElement().getHostAddress());
 			}
 				
 		} catch (SocketException e1) {
@@ -128,11 +130,55 @@ public class ClientViewImpl extends AbstractClientView implements ActionListener
 				    "Unable to list the network interfaces.",
 				    "Network error",
 				    JOptionPane.ERROR_MESSAGE);
-			return;
+			
+			return null;
 		}
-		String[] ifs = new String[v.size()];		
-		v.copyInto(ifs);
 		
+		// String array containing the interface addresses
+		String[] ifs = new String[interfaceList.size()];		
+		interfaceList.copyInto(ifs);
+		
+		return (String)JOptionPane.showInputDialog(
+                frame,
+                "Select the IP address of this client's RMI registry:\n",
+                "Local RMI registry IP address",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                ifs,
+                //null,
+                "127.0.0.1");
+	}
+	
+	/**
+	 * This method tries to connect to the specified SAL agent. If successful,
+	 * the agent is added to the GUI.
+	 * @param ourIP the IP address of this client's RMI registry
+	 * @param agentIP the IP address of the agent's RMI registry
+	 */
+	private void connectToAgent(String ourIP, String agentIP){
+		try {
+			SALAgent a = controller.rmiConnect(name, agentIP, ourIP);
+			registerEventHandlers(a);
+			tree.addAgent(a);
+		} catch (ConfigurationException e) {
+			addLog("Chosen RMI name '"+name+"' already registered with agent");
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			addLog("RMI error while connecting to agent");
+			e.printStackTrace();
+		} catch (NotFoundException e) {
+			addLog("Error registering event handlers with agent");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * This method is called when the user selected the "Connect to RMI Agent" menu item.
+	 * It asks the user for the IP addresses of RMI registries, creates the client stub
+	 * and updates the GUI 
+	 */
+	public void addRmiAgent(){
+		// ask for the agent's IP address
 		String agentIP = (String)JOptionPane.showInputDialog(
                 frame,
                 "Enter the IP address of the RMI SAL agent:\n",
@@ -144,33 +190,30 @@ public class ClientViewImpl extends AbstractClientView implements ActionListener
 		if(agentIP==null)
 			return;
 		
-		String ourIP = (String)JOptionPane.showInputDialog(
-                frame,
-                "Enter the IP address of this client's RMI registry:\n",
-                "SAL Agent detail",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                ifs,
-                //null,
-                "127.0.0.1");
+		// get the IP address of this client's RMI registry
+		String ourIP = showLocalInterfaces();
 		
-		if(ourIP!=null){
-			try {
-				SALAgent a = controller.rmiConnect(name, agentIP, ourIP);
-				registerEventHandlers(a);
-				tree.addAgent(a);
-			} catch (ConfigurationException e) {
-				addLog("Chosen RMI name '"+name+"' already registered with agent");
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				addLog("RMI error while connecting to agent");
-				e.printStackTrace();
-			} catch (NotFoundException e) {
-				addLog("Error registering event handlers with agent");
-				e.printStackTrace();
-			}
-			
-		}
+		// connect to the agent
+		if(ourIP!=null)
+			connectToAgent(ourIP, agentIP);
+	}
+	
+	/**
+	 * This method is called when the user selected the "List RMI Agents" menu item.
+	 * It shows the list of SAL agents around and try connecting to the selected one
+	 */
+	public void listRmiAgent(){
+		// get the IP address of this client's RMI registry
+		String ourIP = showLocalInterfaces();
+		if (ourIP==null)
+			return;
+		
+		// ask for the agent's IP address
+		String agentIP = BonjourList.showDialog(frame);
+		
+		// connect to the agent
+		if(agentIP!=null)
+			connectToAgent(ourIP, agentIP);
 	}
 	
 	public void removeRmiAgent(SALAgent a){
@@ -187,6 +230,8 @@ public class ClientViewImpl extends AbstractClientView implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		if(ActionAddRMIAgent.equals(e.getActionCommand())){
 			addRmiAgent();
+		} else if(ActionListRMIAgent.equals(e.getActionCommand())){
+			listRmiAgent();
 		} else if(ActionRemoveRMIAgent.equals(e.getActionCommand())){
 			removeRmiAgent(tree.getSelectedLabel().getAgent());
 		} else if(ActionQuit.equals(e.getActionCommand())){
@@ -207,6 +252,12 @@ public class ClientViewImpl extends AbstractClientView implements ActionListener
 		JMenuItem item = new JMenuItem("Add RMI Agent");
 		item.setActionCommand(ActionAddRMIAgent);
 		item.setMnemonic(KeyEvent.VK_A);
+		item.addActionListener(this);
+		menu.add(item);
+		
+		item = new JMenuItem("List RMI Agents");
+		item.setActionCommand(ActionListRMIAgent);
+		item.setMnemonic(KeyEvent.VK_L);
 		item.addActionListener(this);
 		menu.add(item);
 		

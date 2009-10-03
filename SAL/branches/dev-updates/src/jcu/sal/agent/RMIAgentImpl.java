@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import jcu.sal.common.CommandFactory;
+import jcu.sal.common.Constants;
 import jcu.sal.common.Response;
 import jcu.sal.common.Slog;
 import jcu.sal.common.StreamID;
@@ -29,6 +30,12 @@ import jcu.sal.common.exceptions.SALDocumentException;
 import jcu.sal.common.exceptions.SensorControlException;
 
 import org.apache.log4j.Logger;
+
+import avahi4j.Avahi4JConstants;
+import avahi4j.Client;
+import avahi4j.EntryGroup;
+import avahi4j.Avahi4JConstants.Protocol;
+import avahi4j.exceptions.Avahi4JException;
 
 /**
  * This class acts as an adapter around a {@link SALAgent} object and transforms
@@ -69,17 +76,54 @@ public class RMIAgentImpl implements RMIAgent {
 	
 	private LocalAgentImpl agent;
 	private Map<String, SALClient> clients;
+	private Client client;
+	private EntryGroup bonjourService;
 	
 	public RMIAgentImpl(){
 		clients = new Hashtable<String, SALClient>();
 		agent = new LocalAgentImpl();
+		client = null;
+		bonjourService  = null;
 	}
 	
-	public void start(String pc, String sc) throws ConfigurationException{
+	public void start(String serviceName, int port, String pc, String sc) throws ConfigurationException{
 		agent.start(pc,sc);
+		
+		// register with bonjour
+		try {
+			client = new Client();
+			client.start();
+			bonjourService = client.createEntryGroup();
+			bonjourService.addService(Avahi4JConstants.AnyInterface, Protocol.ANY,
+					serviceName, Constants.SAL_SERVICE_TYPE, null, null,
+					port, null);
+			bonjourService.commit();
+			System.out.println("Registered with Bonjour - service name: "+serviceName);
+		} catch (Avahi4JException e) {
+			System.out.println("Error registering with bonjour");
+			// error registering bonjour service
+			if (bonjourService!=null){
+				bonjourService.release();
+				bonjourService = null;
+			}
+			
+			if(client!=null) {
+				client.release();
+				client = null;
+			}
+		}
+		
+		
 	}
 	
 	public void stop(){
+		// unregister from bonjour
+		if (bonjourService!=null)
+			bonjourService.release();
+		
+		if(client!=null)
+			client.release();
+		
 		agent.stop();
 	}
 
@@ -200,9 +244,12 @@ public class RMIAgentImpl implements RMIAgent {
 	}
 	
 	public static void main (String args[]) throws ConfigurationException, IOException{
-		if(args.length!=3) {
-			System.out.println("We need three arguments:");
-			System.out.println("1: the IP address of our registry - 2: the platform configuration file - 3: the sensor configuration file");
+		if(args.length!=4) {
+			System.out.println("We need four arguments:");
+			System.out.println("1: the IP address of our registry\n"
+					+ "2: the platform configuration file\n"
+					+ "3: the sensor configuration file"
+					+ "4: the SAL Bonjour service name");
 			System.exit(1);
 		}
 		Registry registry;
@@ -218,9 +265,9 @@ public class RMIAgentImpl implements RMIAgent {
 			System.out.println("Error finding our registry");
 			throw e1;
 		}
-		
+
 		RMIAgentImpl agent = new RMIAgentImpl();
-		agent.start(args[1], args[2]);
+		agent.start(args[3], Registry.REGISTRY_PORT, args[1], args[2]);
 		try {
 			//System.out.println("RMI SAL Agent @ "+args[0]+" exporting");
 			RMIAgent stub = (RMIAgent) UnicastRemoteObject.exportObject((RMIAgent) agent, 0);
