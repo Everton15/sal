@@ -1,0 +1,17 @@
+This page explains how SAL integrates with a well-known middleware suite for sensor networks: Data Turbine.
+
+# Data Turbine #
+Data Turbine is an robust open source streaming middleware for sensor-based environmental observation systems. It acts as a ring buffer where data sources (typically sensors) insert readings periodically. The ring buffer is essentially a very large cache where data can be extracted by sinks.
+Data Turbine is available at [here](http://www.dataturbine.org).
+
+# SAL-T project #
+The SAL Transport project (SAL-T) acts as a SAL client, retrieves streams of data from sensors as reported by SAL, and inserts them into a Data Turbine ring buffer.
+
+![http://sensor-abstraction.googlegroups.com/web/SAL-DT.png](http://sensor-abstraction.googlegroups.com/web/SAL-DT.png)
+
+# Future work #
+One advantage of Data Turbine is that it runs on embedded platforms (like Gumstix), and a hierarchical structure of Data Turbine ring buffers can be easily created.
+
+The functionalities of a SAL agent running on a embedded sensor gateway can be extended by running an instance of a (small) ring buffer locally, which acts as a data cache in case network connectivity is temporarily unavailable. The local ring buffer can then be connected to a larger one running on a more powerful platform. This approach can improve fault tolerance, but may increase latency, ie it may take longer for a single data element extracted from a sensor to reach users.
+
+![http://sensor-abstraction.googlegroups.com/web/SAL-hierarchy.png](http://sensor-abstraction.googlegroups.com/web/SAL-hierarchy.png)

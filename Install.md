@@ -1,0 +1,67 @@
+This page explains how to download, build and run SAL
+
+# Download #
+
+SAL can be downloaded from the subversion repository using:
+```
+svn co http://sal.googlecode.com/svn/SAL/trunk SAL
+```
+This will create a SAL directory containing the SAL source tree.
+
+# Building #
+**Before build SAL, make sure you have installed all its dependencies as explained on the [dependencies page](Dependencies.md).**
+
+Install the SNMP package in the standard JAR location using:
+```
+sudo ant dep
+```
+You only need to do this once.
+
+SAL is split over 4 JAR files:
+  * the SAL agent code is in SAL-agent.jar
+  * the SAL client code is in SAL-client.jar
+  * the SAL agent plugins are in SAL-plugins.jar
+  * code common to all three above is in SAL-common.jar
+
+To compile all JAR files, run:
+```
+ant jar-all
+```
+
+# Running SAL #
+For an introduction to SAL, see [this page](SALOverview.md). Starting SAL is done by invoking the right ant target, which invokes the JVM with the right classpath, properties and command line arguments.
+
+## Running a SAL agent ##
+SAL agents store information on platform and sensor configuration in two separate files. When starting an agent, a valid path to sensor configuration and platform configuration files must be given. If either file does not exist, the agent will create an empty one and populate it. Otherwise, configuration information is read from the file and applied. The default path for both sensor and platform configuration files can be found in the "project.run.platformconfig.file" and "project.run.sensorconfig.file" properties in the "build.properties" file.
+
+A SAL agent can be started in 2 ways:
+  * as a standalone (or local) agent. In this case, an instance of a SAL agent is created, along with a small text-based client which interacts with the agent based on user input.
+  * as an RMI agent. In this case, an instance of a SAL agent is created and its interface exported using RMI. Remote clients can invoked methods in the SAL agent interface over the network using standard RMI calls.
+
+### Starting a local SAL agent ###
+To start a local SAL agent, run:
+```
+ant run-local-client
+```
+
+### Starting an RMI SAL agent ###
+You need to edit "build.properties" and adjust the values of "project.run.rmi.agent.arg1" to the right IP address of the SAL agent.
+To start an RMI agent, run:
+```
+ant run-rmi-agent
+```
+Press enter to stop the agent.
+
+## Running an RMI client ##
+If you decided to start an RMI SAL agent, you can use an RMI client to interact with it over the network. There are two implementations of an RMI client: text-based and GUI. The text-based version is more complete than the GUI one. The text-based version can call all methods of the SAL agent interface, whereas the GUI version can only access some of them.
+
+To run the text-based version, first, in "build.properties", adjust the "project.run.rmi.client.arg2" to the IP address of the SAL agent, and "project.run.rmi.client.arg3" to the IP address of this RMI client, & run:
+```
+ant run-rmi-client
+```
+
+To start the GUI version, run:
+```
+ant run-rmi-client-gui
+```
+(no need to edit build.properties)

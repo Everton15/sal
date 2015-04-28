@@ -1,0 +1,120 @@
+This page explains how to create a new SAL plugin to support a new technology. You need to know about protocols and endpoints (explained [on this page](ProtocolEP.md)).
+
+All plugins require the following:
+  * a class which extends `jcu.sal.components.protocols.AbstractProtocol`
+  * a class containing a list of CML descriptions representing the potential commands the new plugin will support.
+
+# Extending AbstractProtocol #
+Common protocol behaviour is encapsulated in the abstract class AbstractProtocol.
+The `jcu.sal.plugins.protocols.dummy.DummyProtocol` class provides a simple example, which will we use here. The DummyProtocol plugin allows creation of fake sensors. These support only a single "getReading" command which always returns the same value.
+
+## Lifecycle ##
+Typical protocol lifecycle:
+  1. Protocol construction: done by the constructor
+  1. Configuration parsing: done by `AbstractProtocol.parseConfig()` which eventually calls `internal_parseConfig()` in the subclass.
+  1. Start the protocol: done by calling `AbstractProtocol.start()`, which calls `internal_start()` in the subclass.
+  1. Any number of calls to the following:
+    1. `AbstractProtocol.isSensorSupported()` which calls `internal_isSensorSupported()` in the subclass,
+    1. `AbstractProtocol.probeSensor()` which calls `internal_probeSensor()` in the sublcass
+
+## Constructor ##
+The constructor of the new plugin must have the following prototype:
+```
+DummyProtocol(ProtocolID i, ProtocolConfiguration c)  throws ConfigurationException 
+```
+The constructor must also call the base class constructor with the following arguments:
+```
+super(i, PROTOCOL_TYPE, c);
+```
+The constructor should limit itself to intialising members in its own class and setting appropriate values on members of its parent class (AbstractProtocol). **In particular, no parsing of the `Protocolonfiguration` object is allowed here.**
+
+The constructor must give to the `supportedEndPointTypes` member a list of end points the new plugin can be used with. An end point represents a physical IO port (Serial, USB, network interface...) or a file on a filesystem (see [this page](ProtocolEP.md)). Endpoints are located in the `jcu.sal.plugins.endpoints` package. To add an end point, locate the static string names `ENDPOINT_TYPE` in the required end point class and add it to `supportedEndPointTypes`. For example, to specify that this protocol supports USB end points, use:
+```
+supportedEndPointTypes.add(USBEndPoint.ENDPOINT_TYPE);
+```
+
+The DummyProtocol constructor supports the Filesystem endpoint and disable automatic detection of connected sensors (see [this section](#Automating_sensor_detection.md) for more information on automating sensor detection).
+```
+public DummyProtocol(ProtocolID i, ProtocolConfiguration c) throws ConfigurationException {
+	super(i, PROTOCOL_TYPE, c);		
+
+	//Add to the list of supported EndPoint IDs
+	supportedEndPointTypes.add(FSEndPoint.ENDPOINT_TYPE);
+
+	//Disable autodetection
+	autoDetectionInterval = 0;
+}
+```
+
+## Overriding base-class methods ##
+A few methods in the `AbstractProtocol` base class are abstract and must be overridden in the new plugin.
+
+### start ###
+```
+protected abstract void internal_start() throws ConfigurationException;
+```
+
+> /
+    * Starts the protocol. When this method returns, the protocol must be ready to handle
+    * requests to access (execute()), probe (probeSensor()) sensors without any further configuration.
+    * internal\_start should not call probeSensor. Calls to this method are synchronized wrt calls to execute(),
+    * start() and remove().
+    * 
+> protected abstract void internal\_start() throws ConfigurationException;
+
+### stop ###
+```
+protected abstract void internal_stop();
+```
+/
+  * This method must stop the protocol. Calls to this method are synchronized wrt to calls to execute(),
+  * start() and remove()
+  * 
+  * 
+> protected abstract void internal\_stop();
+
+### remove ###
+```
+protected abstract void internal_remove();
+```
+/
+  * This method prepares the subclass to be removed. Calls to this method are synchronized wrt calls to execute(),
+  * start() and remove().
+  * 
+> protected abstract void internal\_remove();
+
+### parseConfig ###
+```
+protected abstract void internal_parseConfig() throws ConfigurationException;
+```
+> /
+    * Parse the configuration of the protocol itself. This method should check the values of the parameters in the
+    * ```
+config``` object, and apply them if sensible. Also, note that the value of ```
+autoDetectionInterval```
+    * will be changed to that of the "AutoDetecSensor" parameter if present (If not present, the value is untouched).
+    * This method must also instanciate the CML store in ```
+cmls```.
+    * 
+> protected abstract void internal\_parseConfig() throws ConfigurationException;
+
+### probeSensor ###
+```
+protected abstract boolean internal_probeSensor(Sensor s);
+```
+
+### isSensorSupported ###
+```
+protected abstract boolean internal_isSensorSupported(Sensor s);
+```
+> /
+    * Check whether a sensor is supported by this protocol regardless of whether the sensor's current state
+    * @param s the sensor to be probed
+    * 
+> protected abstract boolean internal\_isSensorSupported(Sensor s);
+
+
+
+
+
+# Automating sensor detection #

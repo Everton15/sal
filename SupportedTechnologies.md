@@ -1,0 +1,15 @@
+The following table lists the platforms and sensor technologies supported by SAL.
+
+| **Instruments** | **Connection** | **Supported** | **Plugin name** | **State of support** | **Sensor autodetection** | **Adapter autodetection** | **Missing features** |
+|:----------------|:---------------|:--------------|:----------------|:---------------------|:-------------------------|:--------------------------|:---------------------|
+| 1-wire sensors |  USB | YES | OwfsProtocol | Functional & stable | YES | YES | Alerts and serial adapters are not supported |
+| Operating system data | Local filesystem | YES | OSDataProtocol | Functional & stable | YES | YES | reports data about the 1st CPU only |
+| SNMP devices | Ethernet | YES | SSNMPProtocol | Functional & stable | YES | no | Supports only GET PDUs |
+| V4L video sources | ANY (relies on local filesystem) | YES | V4LProtocol | Functional & stable | YES | YES | Bugs in the V4L layer makes V4L1 webcams hang when unplugged during capture |
+| Ambient Systems wireless sensor nodes | Serial | YES | ASProtocol | only the older versions of their nodes is supported | YES | no | - |
+| Campbell Scientific instruments | Serial / Ethernet	| WIP | - | Work is being done to implement the PakBus? protocol in Java | - 	| - | - |
+| LabJack | USB | no | - | Coming soon | - | - | - |
+| Arduino boards | Serial / Bluetooth	| no | - | Coming soon. The plan is to have a SAL compatible stub running on the boards so they can be controlled through SAL's API | - | - | - |
+| Xbow imote2 | USB | no | - | Coming soon | - | - | - |
+| Gumstix | USB/serial | no | - | Coming soon | -  | - | - |
+| SunSpot | USB | YES | SALSpot | Supports built-in temperature, light and accelerometer | YES |  YES | - |

@@ -1,0 +1,59 @@
+This page gives a high level overview of the Sensor Abstraction Layer.
+
+# Introduction & rationale #
+Traditional sensor network infrastructures rely heavily on middleware software to interface with various instruments. In the current state, plugin-based middleware software does not offer the flexibility required to achieve “plug & play”, where users can simply connect new sensors and instruments and expect them to work straight away.
+
+In an attempt to use the sensing technology best suited to a task, it has become common to find many disparate monitoring devices and instruments from different manufacturers. More and more, heterogeneous sensing technologies are being integrated within single installations.
+
+In order to streamline hardware integration and eliminate the need for manual configuration and setup, middleware technology must be decoupled from hardware. Common tasks must be grouped together in their own software layer, which in turn provides a common, device-independent abstracted view of sensor and instrument hardware. Encapsulating all hardware-interacting code within a single software layer provides a standard way of accessing and managing instruments.
+
+The Sensor Abstraction Layer (SAL) is a low-level software layer which encapsulates all hardware-related functionalities, removes hardware-dependent code from middleware software and facilitates interactions with sensors and instruments. SAL implements hardware detection, configuration, access and control functions and enforces a clear separation of responsibilities with respect to hardware interactions. Using SAL, middleware software can be made device- and technology-independent. Hardware management functions are only implemented in SAL, which avoids code duplication and promotes code re-usability across middleware technologies. SAL solves many of the issues current middleware products have with respect to hardware detection and configuration, as it automates most of these tasks, making new instruments available for immediate use as soon as they are connected.
+
+The diagram below represents a typical software stack for sensor networks using SAL.
+
+![http://sensor-abstraction.googlegroups.com/web/middleware-small.png](http://sensor-abstraction.googlegroups.com/web/middleware-small.png)
+
+# High level design #
+
+## SAL components ##
+
+SAL features are implemented in SAL agents. A **SAL agent** instance runs on a platform to which sensors are connected, either directly using the platform's Input/Output ports (serial, USB, ...), or indirectly (over a wireless network for instance). This platform is referred to as a **sensor gateway**. The SAL agent manages all directly-connected sensors it can find & all indirectly-connected sensors it has been told about.
+
+**SAL clients** uses the public (Java) interface provided by SAL agents to have them execute specific actions on sensors. This Java interface is referred to as the **SAL agent API** or **SAL API** in short.
+
+## SAL API ##
+When using SAL, all interactions with sensing hardware are delegated to a SAL agent. SAL agents provide a simple (Java) interface whose methods must be called in order to perform specific actions on the underlying hardware. Methods in the interface are grouped in the following categories:
+  * **sensor management** (enumeration/addition/removal)
+  * **sensor capabilities discovery & control**
+  * **platform configuration** (addition/removal of new sensing technologies)
+A detailed analysis of each category can be found on the [SAL agent API page](AgentAPI.md).
+
+## Local & Remote agents ##
+A **local SAL agent** instance on a sensor gateway runs in its own Java Virtual Machine (JVM). The SAL agent interface (SAL API) is only available in that JVM. In order to use it, a client application must be run in the same JVM as the agent. This approach has the added advantage of low-overhead method calls and low latency.
+
+A **remote SAL agent** is a instance of a SAL agent whose interface has been exported using Java Remote Method Invocation (RMI). All methods in the SAL API of a remote agent can be called from a separate JVM over a network connection. Remote agents can handle multiple simultaneous client connections.
+
+# Markup languages #
+SAL provides a unique API which is used to control all kinds of sensors. In order to achieve this, the API relies on various markup languages to report on sensor configuration and capabilities.
+
+Methods in the sensor management category make use of **SML description(s) documents**. SML is a rather simple markup language that describes a sensor's configuration (from a programming point-of view).
+
+Methods in the sensor capabilities and control category rely on **CML documents**, which contain a list of capabilities (commands) supported by a sensor. See [this page](CML.md) for more information.
+
+Methods in the platform configuration category use **PCML documents** which describe how the platform should be configured in order to support a specific sensing technology.
+
+# Use case #
+A typical use case is as follows:
+  1. Using a SAL agent factory, a SAL client creates an instance of local SAL agent or obtains a reference to a remote agent. Either way, both references returned by the factory implement the same interface: the SAL agent interface.
+  1. The client may want to subscribe to specific events (such addition/removal of
+  1. The clients obtains a list and description of sensors managed by the agent.sensors) to save a couple of method invocations just to stay up-to-date.
+  1. Loop over steps 5,6 & 7
+  1. The client identifies which sensor to control and asks the agent for a list of capabilities supported by that sensor. This list is merely a collection of commands (and their descriptions) that can be sent to the sensor to trigger a pre-determined behaviour.
+  1. The client picks a command and instructs the agent to execute it.
+  1. The result of the command is sent back to the client.
+  1. Just before exiting, the client releases the SAL agent, and then terminates.
+
+# Multi-technology support #
+**A protocol** is an object used internally that represent a single technology. Literally, a protocol object translates calls to methods in the SAL API into a series of device-specific calls.
+
+[Next: SAL Agent API](AgentAPI.md)
